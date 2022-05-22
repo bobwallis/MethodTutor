@@ -1,0 +1,34 @@
+{
+  "name": "method-tutor",
+  "description": "An interactive method tutor.",
+  "version": "0.1.0",
+  "license": "GPL-2.0+",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bobwallis/MethodTutor.git"
+  },
+  "scripts": {
+    "start": "concurrently \"gulp && gulp watch\" \"http-server ./web -r\""
+  },
+  "browserslist": [
+    "last 3 versions"
+  ],
+  "devDependencies": {
+    "concurrently": "^6.2.0",
+    "gulp": "^4.0.2",
+    "gulp-amdclean": "^1.1.1",
+    "gulp-autoprefixer": "^8.0.0",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-less": "^5.0.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-replace": "^1.0.0",
+    "gulp-requirejs": "^1.4.0",
+    "gulp-squoosh": "^0.9.0",
+    "gulp-streamify": "^1.0.2",
+    "gulp-svgo": "^2.2.1",
+    "gulp-terser": "^2.0.0",
+    "gulp-typogr": "^1.0.0",
+    "merge-stream": "^2.0.0"
+  }
+}

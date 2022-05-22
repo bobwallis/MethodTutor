@@ -1,0 +1,19 @@
+#overlay {
+    position: absolute;
+    z-index: 99;
+    top: env(titlebar-area-height, 36px);
+    left: 0;
+    width: 100%;
+    height: calc(100% - env(titlebar-area-height, 36px));
+    background-color: @white;
+    &.hide {
+        opacity: 0;
+        pointer-events: none;
+        transition: all .4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    &.active {
+        opacity: 0.8;
+        pointer-events: auto;
+        transition: opacity .4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+}

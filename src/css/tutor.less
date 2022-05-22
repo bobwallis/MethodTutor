@@ -1,0 +1,199 @@
+// Animations
+/* uncss:ignore */
+@keyframes button_success {
+	0%   { background-color: @lighterGrey; }
+	10%  { background-color: @lightGrey; }
+	100% { background-color: @lighterGrey; }
+}
+/* uncss:ignore */
+@keyframes button_error {
+	0%   { background-color: @lighterGrey; }
+	10%  { background-color: @red; }
+	100% { background-color: @lighterGrey; }
+}
+/* uncss:ignore */
+@keyframes errorFlash {
+	0%   { opacity: 0; }
+	10%  { opacity: 1; }
+	100% { opacity: 0; }
+}
+
+#practice_container {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	min-height: 320px;
+	height: calc(100vh - 36px - 72.5px - 2*env(titlebar-area-height, 36px));
+	user-select: none;
+	box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
+
+	@media (max-width: 800px) {
+		height: calc(100vh - 36px - 72.5px - env(titlebar-area-height, 36px));
+	}
+
+	canvas {
+		opacity: 0;
+		transition: opacity .2s cubic-bezier(0.23, 1, 0.32, 1);
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translate(-50%);
+		&.visible {
+			opacity: 1;
+		}
+	}
+
+	.practice_controls {
+		position: absolute;
+		bottom: 0;
+		background-color: @lighterGrey;
+		width: 100%;
+		height: 30px;
+		&.active {
+			cursor: pointer;
+		}
+
+		.practice_controls_left, .practice_controls_down, .practice_controls_right {
+			position: absolute;
+			bottom: 0;
+			height: 30px;
+			width: 33%;
+			background-color: @lighterGrey;
+			background-repeat: no-repeat;
+			background-position: center center;
+			&.success {
+				animation: button_success .1s;
+			}
+			&.error {
+				animation: button_error .1s;
+			}
+		}
+		.practice_controls_left {
+			background-size: 20px;
+			background-image: url(left.svg);
+			left: 0;
+		}
+		.practice_controls_down {
+			background-size: auto 22px;
+			background-image: url(down.svg);
+			left: 33.333%;
+		}
+		.practice_controls_right {
+			background-size: 20px;
+			background-image: url(right.svg);
+			right: 0;
+		}
+	}
+
+	.practice_buttons {
+		position: absolute;
+    	pointer-events: none;
+		top: 0;
+		left: 0;
+		background-color: rgba(255,255,255,0.8);
+		border-bottom: 1px solid @lighterGrey;
+		backdrop-filter: blur(2px);
+		width: 100%;
+		height: 120px;
+		box-sizing: border-box;
+		text-align: center;
+		transition-duration: .2s;
+		transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+		opacity: 0;
+		transform: translateY(-60px);
+		h1 {
+			font-size: 14px;
+			font-weight: normal;
+			line-height: 30px;
+			padding: 0 16px;
+			margin: 20px 0 5px 0;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			color: @accent;
+			text-transform: uppercase;
+			text-shadow: -1px -1px 1px #FFF, 1px -1px 1px #FFF, -1px 1px 1px #FFF, 1px 1px 1px #FFF;
+		}
+		input {
+			display: inline-block;
+			font-size: 12px;
+			line-height: 30px;
+			height: 30px;
+			background-color: #002856;
+			margin: 10px;
+			color: white;
+			border-radius: 3px;
+			border: 0;
+			padding: 0 15px;
+			text-transform: uppercase;
+			text-align: center;
+			box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
+			cursor: default;
+		}
+		&.visible {
+    		pointer-events: auto;
+  			transition-duration: .2s;
+        	transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+			opacity: 1;
+			transform: translateY(0);
+			input {
+				cursor: pointer;
+			}
+		}
+	}
+
+	.practice_scoreboard {
+		position: absolute;
+    	pointer-events: none;
+		top: 10px;
+		left: 10px;
+		font-size: 10px;
+		line-height: 15px;
+		opacity: 0;
+		transition: opacity .2s cubic-bezier(0.23, 1, 0.32, 1);
+		&.visible {
+			opacity: 1;
+		}
+	}
+
+	.practice_pause {
+		position: absolute;
+		top: 0;
+		right: 0;
+		width: 40px;
+		height: 40px;
+		background-repeat: no-repeat;
+		background-position: center center;
+		background-size: 25px;
+		background-image: url(x.svg);
+		opacity: 0;
+		transition: opacity .2s cubic-bezier(0.23, 1, 0.32, 1);
+		&.visible {
+			cursor: pointer;
+			opacity: 1;
+		}
+	}
+
+	.practice_errorFlash_left, .practice_errorFlash_down, .practice_errorFlash_right {
+		position: absolute;
+    	pointer-events: none;
+		opacity: 0;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		&.error {
+			animation: errorFlash .2s;
+		}
+	}
+	.practice_errorFlash_left {
+		background-image: radial-gradient(circle farthest-corner at 5% 100% , @red, rgba(0,0,0,0));
+	}
+	.practice_errorFlash_down {
+		background-image: radial-gradient(circle farthest-corner at 50% 100% , @red, rgba(0,0,0,0));
+	}
+	.practice_errorFlash_right {
+		background-image: radial-gradient(circle farthest-corner at 95% 100% , @red, rgba(0,0,0,0));
+	}
+}
