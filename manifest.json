@@ -1,0 +1,30 @@
+{
+    "lang": "en",
+    "name": "Method Tutor",
+    "short_name": "Tutor",
+    "description": "An interactive method tutor",
+    "icons": [
+      {
+        "src": "/MethodTutor/androidicon-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/MethodTutor/appicon-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "maskable"
+      },
+      {
+        "src": "/MethodTutor/androidicon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "/MethodTutor/",
+    "background_color": "#F6F6F6",
+    "theme_color": "#F6F6F6",
+    "display": "standalone",
+    "display_override": [ "window-controls-overlay" ],
+    "orientation": "portrait"
+  }
