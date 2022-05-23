@@ -22,8 +22,8 @@
       }
     ],
     "start_url": "/MethodTutor/",
-    "background_color": "#F6F6F6",
-    "theme_color": "#F6F6F6",
+    "background_color": "#E0DED9",
+    "theme_color": "#E0DED9",
     "display": "standalone",
     "display_override": [ "window-controls-overlay" ],
     "orientation": "portrait"
