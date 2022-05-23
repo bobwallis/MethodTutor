@@ -90,7 +90,8 @@ function img() {
 			.pipe( svgo() )
 			.pipe( gulp.dest( DEST ) ),
 		gulp.src( ['src/img/*.png'] )
-			.pipe( svgo() )
+			.pipe( gulp.dest( DEST ) ),
+		gulp.src( ['src/img/*.ico'] )
 			.pipe( gulp.dest( DEST ) )
 	);
 };
