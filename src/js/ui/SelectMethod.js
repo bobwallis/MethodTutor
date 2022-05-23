@@ -45,10 +45,11 @@ define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
 
         } );
 
+
         // Listen for changes to place notation and only let user proceed if it's populated
         var nextButton = document.querySelector( '#selectMethod .next_button' ),
             pnChange =  function( e ) {
-            if( document.getElementById( 'practice_chooser_notation' ).value === '' ) {
+            if( practice_chooser_notation.value === '' ) {
                 nextButton.style.pointerEvents = 'none';
                 nextButton.style.opacity = 0;
             }
@@ -59,6 +60,24 @@ define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
         };
         practice_chooser_notation.addEventListener( 'change', pnChange );
         practice_chooser_notation.addEventListener( 'input', pnChange );
+
+
+        // Listen for changes to title and show the restart button
+        var prevButton = document.querySelector( '#selectMethod .prev_button' ),
+            titleChange =  function( e ) {
+            if( practice_chooser_name.value === '' ) {
+                prevButton.style.pointerEvents = 'none';
+                prevButton.style.opacity = 0;
+            }
+            else {
+                prevButton.style.pointerEvents = 'auto';
+                prevButton.style.opacity = 1;
+            }
+        };
+        practice_chooser_name.addEventListener( 'change', titleChange );
+        practice_chooser_name.addEventListener( 'input', titleChange );
+        practice_chooser_notation
+        practice_chooser_notation
 
         // Reset the form and focus the search box when the restart button is clicked
         document.querySelector( '#selectMethod input[type="reset"]' ).addEventListener( 'click', function(e) {
