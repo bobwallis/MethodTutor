@@ -31,10 +31,11 @@ define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
                 } )
                 .then( function( data ) {
                     var fragment = '';
-                    for( var i = 0; i < 5; i++ ) {
+                    for( var i = 0; i < 4; i++ ) {
                         if( typeof data.results[i] === 'undefined' ) { break; }
-                        fragment += '<li data-stage="'+data.results[i].stage+'" data-notation="'+data.results[i].notation+'" data-ruleOffs="{&quot;from&quot;:'+data.results[i].ruleOffs.from+',&quot;every&quot;:'+data.results[i].ruleOffs.every+'}">'+data.results[i].title+'</li>'
+                        fragment += '<li class="result" data-stage="'+data.results[i].stage+'" data-notation="'+data.results[i].notation+'" data-ruleOffs="{&quot;from&quot;:'+data.results[i].ruleOffs.from+',&quot;every&quot;:'+data.results[i].ruleOffs.every+'}">'+data.results[i].title+'</li>';
                     }
+                    fragment += '<li class="close">Close Search Results ✖</li>';
                     searchResults.innerHTML = fragment;
                     searchResults.style.marginBottom = (i*-33)+'px';
                     searchResults.style.display = 'block';
@@ -94,7 +95,7 @@ define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
 
 
         // Listen for clicks on search results
-        $document_on( 'click', '#searchResults li', function( e ) {
+        $document_on( 'click', '#searchResults li.result', function( e ) {
             practice_chooser_name.value = e.target.innerText;
             practice_chooser_notation.value = e.target.dataset.notation;
             practice_chooser_stage.value = e.target.dataset.stage;
@@ -103,6 +104,9 @@ define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
             practice_chooser_notation.dispatchEvent( new Event( 'change', { bubbles: true } ) );
             practice_chooser_stage.dispatchEvent( new Event( 'change', { bubbles: true } ) );
             practice_chooser_ruleOffs.dispatchEvent( new Event( 'change', { bubbles: true } ) );
+            searchResults.style.display = 'none';
+        } );
+        $document_on( 'click', '#searchResults li.close', function( e ) {
             searchResults.style.display = 'none';
         } );
     } );
