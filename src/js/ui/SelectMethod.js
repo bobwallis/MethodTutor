@@ -5,6 +5,7 @@ define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
             practice_chooser_stage    = document.getElementById( 'practice_chooser_stage' ),
             practice_chooser_notation = document.getElementById( 'practice_chooser_notation' ),
             practice_chooser_ruleOffs = document.getElementById( 'practice_chooser_ruleOffs' ),
+            practice_chooser_help     = document.getElementById( 'practice_chooser_help' ),
             searchResults = document.getElementById( 'searchResults' );
 
         // Listen for changes to the name box and initiate a search
@@ -63,22 +64,22 @@ define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
         practice_chooser_notation.addEventListener( 'input', pnChange );
 
 
-        // Listen for changes to title and show the restart button
+        // Listen for changes to title. Show the restart button, and make the help bolder
         var prevButton = document.querySelector( '#selectMethod .prev_button' ),
             titleChange =  function( e ) {
             if( practice_chooser_name.value === '' ) {
                 prevButton.style.pointerEvents = 'none';
                 prevButton.style.opacity = 0;
+                practice_chooser_help.classList.add( 'pulse' );
             }
             else {
                 prevButton.style.pointerEvents = 'auto';
                 prevButton.style.opacity = 1;
+                practice_chooser_help.classList.remove( 'pulse' );
             }
         };
         practice_chooser_name.addEventListener( 'change', titleChange );
         practice_chooser_name.addEventListener( 'input', titleChange );
-        practice_chooser_notation
-        practice_chooser_notation
 
         // Reset the form and focus the search box when the restart button is clicked
         document.querySelector( '#selectMethod input[type="reset"]' ).addEventListener( 'click', function(e) {
