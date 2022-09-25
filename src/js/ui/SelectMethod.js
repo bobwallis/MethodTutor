@@ -1,12 +1,25 @@
 define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
 
     ready( function() {
-        var practice_chooser_name     = document.getElementById( 'practice_chooser_name' ),
-            practice_chooser_stage    = document.getElementById( 'practice_chooser_stage' ),
-            practice_chooser_notation = document.getElementById( 'practice_chooser_notation' ),
-            practice_chooser_ruleOffs = document.getElementById( 'practice_chooser_ruleOffs' ),
-            practice_chooser_help     = document.getElementById( 'practice_chooser_help' ),
-            searchResults = document.getElementById( 'searchResults' );
+        var practice_chooser_name                 = document.getElementById( 'practice_chooser_name' ),
+            practice_chooser_stage                = document.getElementById( 'practice_chooser_stage' ),
+            practice_chooser_notation             = document.getElementById( 'practice_chooser_notation' ),
+            practice_chooser_ruleOffs             = document.getElementById( 'practice_chooser_ruleOffs' ),
+            practice_chooser_allowMethodSelection = document.getElementById( 'practice_chooser_allowMethodSelection' ),
+            practice_chooser_help                 = document.getElementById( 'practice_chooser_help' ),
+            searchResults                         = document.getElementById( 'searchResults' );
+
+        // If the setting to disable method choice is set, then hide the relevant UI elements
+        practice_chooser_allowMethodSelection.addEventListener( 'change', function() {
+            var allow = practice_chooser_allowMethodSelection.value === 'false'? false : true;
+            if( !allow ) { // No need to unhide as setting is only possible via query string and can't be turned off
+                var prevButton = document.querySelector( '#chooseOptions .prev_button' );
+                prevButton.style.pointerEvents = 'none';
+                prevButton.style.opacity = 0;
+                document.querySelector( '#chooseOptions h3' ).style.display = 'none';
+                document.querySelector( '#head h1' ).innerHTML = (practice_chooser_name.value !== '')? 'Method Tutor &raquo; <span style="font-weight:normal">'+practice_chooser_name.value+'</span>' : 'Method Tutor';
+            }
+        } );
 
         // Listen for changes to the name box and initiate a search
         var searchCount = 0

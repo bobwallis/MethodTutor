@@ -56,7 +56,8 @@ define( ['ready', '$document_on'], function( ready, $document_on ) {
             'title': document.getElementById( 'practice_chooser_name' ),
             'stage': document.getElementById( 'practice_chooser_stage' ),
             'notation': document.getElementById( 'practice_chooser_notation' ),
-            'ruleoffs': document.getElementById( 'practice_chooser_ruleOffs' )
+            'ruleoffs': document.getElementById( 'practice_chooser_ruleOffs' ),
+            'allowMethodSelection': document.getElementById( 'practice_chooser_allowMethodSelection' )
         };
     } );
 
