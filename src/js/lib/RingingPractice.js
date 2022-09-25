@@ -310,24 +310,37 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 		})();
 		if( options.introduction ) {
 			var fillTextCache_introduction = (function() {
+				// Create the canvas and set global options
 				var cacheCanvas = new Canvas( {
 					id: 'cc2',
 					width: canvasWidth,
-					height: 40
+					height: 70
 				} );
 				var context = cacheCanvas.context;
-				context.font         = '13px Roboto, sans-serif';
 				context.strokeStyle  = 'rgba(255,255,255,0.8)';
-				context.lineWidth    = 4;
-				context.fillStyle    = '#333';
+				context.lineWidth    = 6;
 				context.textAlign    = 'center';
 				context.textBaseline = 'middle';
-				context.strokeText( 'Use the arrow keys, or', canvasWidth/2, 40/3 );
-				context.strokeText( 'tap the screen, to navigate.', canvasWidth/2, 40*2/3 );
-				context.fillText( 'Use the arrow keys, or', canvasWidth/2, 40/3 );
-				context.fillText( 'tap the screen, to navigate.', canvasWidth/2, 40*2/3 );
+				// Draw the tutor title
+				if( typeof options.title === 'string' ) {
+					context.font      = '14px Roboto, sans-serif';
+					context.fillStyle = '#002856';
+					context.strokeText( options.title.toUpperCase(), canvasWidth/2, -10+60/3 );
+					context.fillText( options.title.toUpperCase(), canvasWidth/2, -10+60/3 );
+				}
+				// Then draw the instruction text
+				context.font      = '13px Roboto, sans-serif';
+				context.fillStyle = '#333';
+				context.strokeText( 'Use the arrow keys, or', canvasWidth/2, 10+60*2/4 );
+				context.strokeText( 'tap the screen, to navigate.', canvasWidth/2, 10+60*3/4 );
+				context.fillText( 'Use the arrow keys, or', canvasWidth/2, 10+60*2/4 );
+				context.fillText( 'tap the screen, to navigate.', canvasWidth/2, 10+60*3/4 );
 				// Check if the clearance rectangle needs to be increased
+				// Calculate the width of what we just drew
 				var width = context.measureText('tap the screen, to navigate.').width;
+				context.font = '14px Roboto, sans-serif';
+				width = Math.max( width, context.measureText( options.title.toUpperCase() ).width );
+				// Then increase the global clearance rectangle if needed
 				if( Math.floor((canvasWidth - width)/2) < clearLeft ) {
 					clearWidth = Math.max( width, clearWidth + clearLeft - Math.floor((canvasWidth - width)/2) );
 					clearLeft = Math.floor( Math.max(0, (canvasWidth - width)/2));
@@ -588,7 +601,7 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 
 			// Introduction message
 			if( dotY - (currentRow*rowHeight) > 0 && options.introduction ) {
-				context.drawImage( fillTextCache_introduction.element, 0, dotY - (currentRow*rowHeight) - 100, canvasWidth, 40 );
+				context.drawImage( fillTextCache_introduction.element, 0, dotY - (currentRow*rowHeight) - 100, canvasWidth, 70 );
 			}
 
 			// That's all message

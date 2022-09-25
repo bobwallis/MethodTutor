@@ -1,11 +1,5 @@
 define( ['ready', '../lib/RingingPractice', '../lib/PlaceNotation'], function( ready, RingingPractice, PlaceNotation ) {
     ready( function() {
-        // Listen for changes to the method name and set the title
-        var sectionTitle = document.querySelector( '#tutor h3' );
-        document.getElementById( 'practice_chooser_name' ).addEventListener( 'change', function( e ) {
-            sectionTitle.innerText = e.target.value;
-        } );
-
         // Listen for clicks to the Go button, and destroy then re-create the practice interface
         document.getElementById( 'go' ).addEventListener( 'click', function( e ) {
             var i;
@@ -16,7 +10,8 @@ define( ['ready', '../lib/RingingPractice', '../lib/PlaceNotation'], function( r
             practice_container.replaceWith( practice_container.cloneNode(true) );
 
             // Read some options into variables
-            var option_leadOrCourse = document.querySelector( '#practice_chooser_leadOrCourse li.active input' ).value,
+            var option_title = document.getElementById( 'practice_chooser_name' ).value,
+                option_leadOrCourse = document.querySelector( '#practice_chooser_leadOrCourse li.active input' ).value,
                 option_stage = parseInt( document.getElementById( 'practice_chooser_stage' ).value, 10 ),
                 option_notation = PlaceNotation.parse( PlaceNotation.expand( document.getElementById( 'practice_chooser_notation' ).value, option_stage ), option_stage ),
                 option_following = parseInt( practice_chooser_bell.querySelector( 'li.active input' ).value, 10 ) - 1;
@@ -46,6 +41,7 @@ define( ['ready', '../lib/RingingPractice', '../lib/PlaceNotation'], function( r
             // Create a new ringing practice interface
             var practice = new RingingPractice( {
                 container: 'practice_container',
+                title: option_title,
                 stage: option_stage,
                 notation: option_notation,
                 following: option_following,
