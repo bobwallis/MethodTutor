@@ -52,6 +52,7 @@ define( ['ready', '$document_on'], function( ready, $document_on ) {
 
     ready( function() {
         $document_on( 'change', 'select, input', Hash.update );
+        window.addEventListener( 'hashchange', Hash.read );
         fieldMap = {
             'title': document.getElementById( 'practice_chooser_name' ),
             'stage': document.getElementById( 'practice_chooser_stage' ),
