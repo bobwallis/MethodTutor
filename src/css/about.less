@@ -1,24 +1,24 @@
 #about {
     position: absolute;
-    z-index: 100;
-    left: 50%;
-    transform: translateX(-180px);
+    z-index: 8;
+    top: env(titlebar-area-height, 36px);
+    right: 0;
     width: 320px;
     padding: 15px 20px;
     background-color: @white;
-    box-shadow: 0 8px 25px rgba(0,0,0,.4);
     hyphens: auto;
     &.hide {
-        top: 0;
         opacity: 0;
         pointer-events: none;
-        transition: all .4s cubic-bezier(0.23, 1, 0.32, 1);
+        transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
     }
     &.active {
-        top: 75px;
+        top: calc(2*env(titlebar-area-height, 36px));
+        right: env(titlebar-area-height, 36px);
         opacity: 1;
+        box-shadow: 0 8px 25px rgba(0,0,0,.4);
         pointer-events: auto;
-        transition: all .4s cubic-bezier(0.23, 1, 0.32, 1);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.320, 1.275);
     }
     p {
         font-size: 14px;

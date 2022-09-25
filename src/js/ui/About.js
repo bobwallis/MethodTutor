@@ -20,5 +20,9 @@ define( ['ready'], function( ready ) {
             overlay.className = 'hide';
             about.className   = 'hide';
         } );
+        about.addEventListener( 'click', function() {
+            overlay.className = 'hide';
+            about.className   = 'hide';
+        } );
     } );
 } );
