@@ -20,10 +20,10 @@ define( function() {
 		expand: function( notation, stage ) {
 			// Tries to normalise place notation given in abbreviated form into full notation
 			var fullNotation, matches, stageText;
-			
+
 			fullNotation = notation
 				.toUpperCase().replace( /X/g, 'x' ) // Tidy up cases
-				.replace( /[\[{<].*[\]}>]/, '' ).replace( / FCH.*$/, '' ) // Remove anything inside (non normal) brackets, or appended fch details
+				.replace( /[{<].*[}>]/, '' ).replace( / FCH.*$/, '' ) // Remove anything inside (non normal) brackets, or appended fch details
 				.replace( /\.?x\.?/g, 'x' ) // Remove weird input that might mess things up later
 				.trim();
 
@@ -177,16 +177,16 @@ define( function() {
 					piece = piece + stageText;
 				}
 				// Sort the piece characters numerically
-				// Since we don't want to sort inside '()' (for jump changes), map those from '(abc)' to max(a, b, c) for sorting purposes (keeping
+				// Since we don't want to sort inside '()' or '[]' (for jump changes), map those from '[abc]' to max(a, b, c) for sorting purposes (keeping
 				// both the original value and the 'sort key').
-				// This is a bit messy because we need to split twice, once from 12(354)6 to ['12', '(354)' '6'],
-				// then again to [['1','2'], '(354)', ['6']], then flatten the array before sorting and joining back to a string.
+				// This is a bit messy because we need to split twice, once from 12(35)6 to ['12', '(35)' '6'],
+				// then again to [['1','2'], '(35)', ['6']], then flatten the array before sorting and joining back to a string.
 				// There's probably a clearer way to do this.
 				piece = [].concat.apply( [],
-					piece.replace( /\(/g, '~(' ).replace( /\)/g, ')~' ).split('~')
+					piece.replace( /\(/g, '~(' ).replace( /\)/g, ')~' ).replace( /\[/g, '~[' ).replace( /\]/g, ']~' ).split('~')
 						.filter( function( e ) { return e !== ''; } )
 						.map( function( e ) {
-							if( e.charAt( 0 ) == '(' ) {
+							if( e.charAt( 0 ) == '(' || e.charAt( 0 ) == '[' ) {
 								return { sort: Math.max.apply( Math, e.split( '' ).map( PlaceNotation.charToBell ) ), value: e };
 								}
 							else {
@@ -208,7 +208,9 @@ define( function() {
 		expandHalf: function( notation ) {
 			// Expands a symmetrical block of place notation
 			notation = notation.replace( /^&/, '' );
-			var notationReversed = notation.split( '' ).reverse().join( '' ).replace( /\)(.+?)\(/g, function( m, p1 ) { return '('+p1.split( '' ).reverse().join( '' )+')'; } ),
+			var notationReversed = notation.split( '' ).reverse().join( '' )
+			    	.replace( /\)(.+?)\(/g, function( m, p1 ) { return '('+p1+')'; } )
+			    	.replace( /\](.+?)\[/g, function( m, p1 ) { return '['+p1.split( '' ).reverse().join( '' )+']'; } ),
 				firstDot = (notationReversed.indexOf( '.' ) === -1)? 9999 : notationReversed.indexOf( '.' ),
 				firstX = (notationReversed.indexOf( 'x' ) === -1)? 9999 : notationReversed.indexOf( 'x' ),
 				trim;
@@ -225,27 +227,63 @@ define( function() {
 		},
 		parse: function( notation, stage ) {
 			// Parses normalised place notation into permutations
-			var parsed = [],
+			var i, j, k, l,
+				parsed = [],
 				exploded = this.explode( notation ),
 				xPermutation = new Array( stage );
+
 			// Construct the X permutation for stage
-			for( var i = 0; i < stage; i+=2 ) { xPermutation[i] = i+1; xPermutation[i+1] = i; }
+			for( i = 0; i < stage; i+=2 ) { xPermutation[i] = i+1; xPermutation[i+1] = i; }
 			if( i-1 === stage ) { xPermutation[i-1] = i-1; }
 
 			// Then parse section by section
 			for( i = 0; i < exploded.length; i++ ) {
-				// For an x, push our pregenerated x permutation
+				// For an x, push our pre-generated x permutation
 				if( exploded[i] === 'x' ) {
 					parsed.push( xPermutation );
 				}
-				// Otherwise calculate the permutation
 				else {
-					var stationary = exploded[i].split( '' ).map( this.charToBell ),
-						permutation = new Array( stage ),
-						j;
-					// First put in any stationary bells
-					for( j = 0; j < stationary.length; j++ ) {
-						permutation[stationary[j]] = stationary[j];
+					var permutation = new Array( stage ),
+						notationCharacters = exploded[i].split( '' );
+					for( j = 0; j < notationCharacters.length; j++ ) {
+						// A jump change (XY) sends the bell in the 1st place to the 2nd, and the bells in the span shift
+						// (13) takes 1234 to 2314,
+						// (14) takes 1234 to 2341,
+						// (31) takes 1234 to 3124,
+						// (41) takes 1234 to 4123 and so on
+						if( notationCharacters[j] === '(' ) {
+							var from = this.charToBell( notationCharacters[j+1] ),
+								to   = this.charToBell( notationCharacters[j+2] );
+							permutation[to] = from;
+							if( from < to ) {
+								for( k = from; k < to; k++ ) {
+									permutation[k] = k+1;
+								}
+							}
+							else {
+								for( k = from; k > to; k-- ) {
+									permutation[k] = k-1;
+								}
+							}
+							j += 3;
+						}
+						// A jump change [ABCD] describes what happens to position between min(A,B,C,D) and max(A,B,C,D)
+						// [4321] takes 1234 to 4321 and so on
+						else if( notationCharacters[j] === '[' ) {
+							++j;
+							k = notationCharacters.indexOf( ']', j );
+							l = 0;
+							var lowestBell = Math.min.apply( Math, notationCharacters.slice( j, k ).map( this.charToBell ) );
+							while( j < k ) {
+								permutation[lowestBell+l] = this.charToBell( notationCharacters[j] );
+								++j;
+								++l;
+							}
+						}
+						else {
+							var stationary = this.charToBell( notationCharacters[j] );
+							permutation[stationary] = stationary;
+						}
 					}
 					// Then 'x' what's left
 					for( j = 0; j < stage; j++ ) {
@@ -305,7 +343,7 @@ define( function() {
 			while( i-- > stage - 3 ) { row[i] = 1 + (i-mid)*2; }
 			row[i] = row[i+1]-1;
 			row[--i] = row[i+1]+2;
-			if( i ) { row[--i] = row[i+1]+2; }
+			if( i ) { row[--i] = row[i+1]+2 };
 			while( i-- ) { row[i] = i; }
 			return row;
 		},

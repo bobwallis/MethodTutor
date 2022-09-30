@@ -730,8 +730,8 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 		// Functions which try to go left/down/right
 		var left = function() {
 			if( going ) {
-				if( nextPos - currentPos === -1 ) { advance( 'left' ); }
-				else                              { error( 'left' ); }
+				if( nextPos - currentPos <= -1 ) { advance( 'left' ); }
+				else                             { error( 'left' ); }
 			}
 		};
 		var down = function() {
@@ -742,8 +742,8 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 		};
 		var right = function() {
 			if( going ) {
-				if( nextPos - currentPos === 1 ) { advance( 'right' ); }
-				else                             { error( 'right' ); }
+				if( nextPos - currentPos >= 1 ) { advance( 'right' ); }
+				else                            { error( 'right' ); }
 			}
 		};
 		document.body.addEventListener( 'keydown', function( e ) {
