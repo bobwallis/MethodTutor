@@ -49,10 +49,11 @@ define( ['ready', '../lib/RingingPractice', '../lib/PlaceNotation'], function( r
                 ruleOffs: option_ruleOffs,
                 introduction: true,
                 score: true,
-                thatsAll: (option_leadOrCourse === 'course')? "That's all" : ' ',
+                thatsAll: (option_leadOrCourse === 'course')? "That's all!" : ' ',
                 finishRow: (option_leadOrCourse === 'course')? false : option_notation.length,
                 placeStarts: { from: 0, every: option_notation.length },
-                autostart: true
+                autostart: true,
+                buttons: [{text: '↑ Exit', className: 'plain', callback: function() { document.querySelector( '#tutor .prev_button button' ).dispatchEvent( new Event( 'click', { bubbles: true } ) ); }}]
             } );
         } );
     } );

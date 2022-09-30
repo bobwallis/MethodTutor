@@ -183,6 +183,7 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 				var button   = document.createElement( 'input' );
 				button.value = e.text;
 				button.type  = 'button';
+				button.className = (typeof e.className === 'string')? e.className : '';
 				buttonsContainer.appendChild( button );
 				button.addEventListener( 'click', e.callback );
 				return button;
@@ -314,7 +315,7 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 				var cacheCanvas = new Canvas( {
 					id: 'cc2',
 					width: canvasWidth,
-					height: 70
+					height: 90
 				} );
 				var context = cacheCanvas.context;
 				context.strokeStyle  = 'rgba(255,255,255,0.8)';
@@ -331,13 +332,15 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 				// Then draw the instruction text
 				context.font      = '13px Roboto, sans-serif';
 				context.fillStyle = '#333';
-				context.strokeText( 'Use the arrow keys, or', canvasWidth/2, 10+60*2/4 );
-				context.strokeText( 'tap the screen, to navigate.', canvasWidth/2, 10+60*3/4 );
-				context.fillText( 'Use the arrow keys, or', canvasWidth/2, 10+60*2/4 );
-				context.fillText( 'tap the screen, to navigate.', canvasWidth/2, 10+60*3/4 );
+				context.strokeText( 'Use the arrow keys or tap the', canvasWidth/2, 10+60*2/4 );
+				context.strokeText( 'screen to navigate. Press \'Esc\'', canvasWidth/2, 10+60*3/4 );
+				context.strokeText( 'or the \'X\' above ↗ to pause.', canvasWidth/2, 10+60 );
+				context.fillText( 'Use the arrow keys or tap the', canvasWidth/2, 10+60*2/4 );
+				context.fillText( 'screen to navigate. Press \'Esc\'', canvasWidth/2, 10+60*3/4 );
+				context.fillText( 'or the \'X\' above ↗ to pause.', canvasWidth/2, 10+60 );
 				// Check if the clearance rectangle needs to be increased
 				// Calculate the width of what we just drew
-				var width = context.measureText('tap the screen, to navigate.').width;
+				var width = context.measureText( 'screen to navigate. Press \'Esc\'' ).width;
 				context.font = '14px Roboto, sans-serif';
 				width = Math.max( width, context.measureText( options.title.toUpperCase() ).width );
 				// Then increase the global clearance rectangle if needed
@@ -363,8 +366,9 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 				context.fillStyle    = '#333';
 				context.textAlign    = 'center';
 				context.textBaseline = 'top';
-				context.strokeText( (typeof options.thatsAll == 'string')? options.thatsAll : "That's all!", canvasWidth/2, 0 );
-				context.fillText( (typeof options.thatsAll == 'string')? options.thatsAll : "That's all!", canvasWidth/2, 0 );
+				var thatsAllString = (typeof options.thatsAll == 'string')? options.thatsAll : "That's all!";
+				context.strokeText( thatsAllString, canvasWidth/2, 0 );
+				context.fillText( thatsAllString, canvasWidth/2, 0 );
 				return cacheCanvas;
 			})();
 			var fillTextCache_thatsAllFinished = (options.score)? false : true; // We'll need to draw on the final score later
@@ -601,11 +605,11 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 
 			// Introduction message
 			if( dotY - (currentRow*rowHeight) > 0 && options.introduction ) {
-				context.drawImage( fillTextCache_introduction.element, 0, dotY - (currentRow*rowHeight) - 100, canvasWidth, 70 );
+				context.drawImage( fillTextCache_introduction.element, 0, dotY - (currentRow*rowHeight) - 120, canvasWidth, 90 );
 			}
 
 			// That's all message
-			if( finished && currentRow > 1 && options.thatsAll ) {
+			if( finished && currentRow > 1 && options.thatsAll ) {0
 				// If we haven't drawn on the final score yet then do so
 				if( !fillTextCache_thatsAllFinished && options.score ) {
 					fillTextCache_thatsAll.context.font = '13px Roboto, sans-serif';
