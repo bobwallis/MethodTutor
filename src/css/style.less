@@ -10,7 +10,7 @@
 @accent: #002856;
 @accentText: @lightGrey;
 
-
+// General CSS
 html, body {
     padding: 0;
     margin: 0;
@@ -18,6 +18,17 @@ html, body {
     font-size: 14px;
     overflow: hidden;
     user-select: none;
+}
+
+a {
+	text-decoration: underline;
+	text-decoration-color: #A1C4D0;
+	transition-property: color, text-decoration-color;
+	transition-duration: .1s;
+	&:link { color: #29404C; }
+	&:visited { color: #4C2940; }
+	&:active { color: #404C29; }
+	&:hover { text-decoration-color: #29404C; }
 }
 
 // Import specific CSS for the various components
