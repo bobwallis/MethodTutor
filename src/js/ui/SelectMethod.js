@@ -17,7 +17,7 @@ define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
                 prevButton.style.pointerEvents = 'none';
                 prevButton.style.opacity = 0;
                 document.querySelector( '#chooseOptions h3' ).style.display = 'none';
-                document.querySelector( '#head h1' ).innerHTML = (practice_chooser_name.value !== '')? 'Method Tutor &raquo; <span style="font-weight:normal">'+practice_chooser_name.value+'</span>' : 'Method Tutor';
+                document.querySelector( '#head h1' ).innerHTML = (practice_chooser_name.value !== '')? '<span style="font-weight:normal">Method Tutor &raquo;</span> '+practice_chooser_name.value : 'Method Tutor';
             }
         } );
 
