@@ -779,7 +779,7 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 			}
 		} );
 		container.addEventListener( 'touchstart', function( e ) {
-			var touch = event.touches[0],
+			var touch = e.touches[0],
 				containerRect = container.getBoundingClientRect(),
 				posX = (touch.clientX - containerRect.left) / containerRect.width;
 			if( going && touch.pageY - containerRect.top > 30 ) {
