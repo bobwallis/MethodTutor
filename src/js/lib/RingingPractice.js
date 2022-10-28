@@ -1,9 +1,6 @@
 define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( PlaceNotation, Canvas, MeasureCanvasTextOffset ) {
 	var RingingPractice = function( options ) {
 
-		// Key codes
-		var LEFT = 37, DOWN = 40, RIGHT = 39, SHIFT = 16, ESC = 27, SPACE = 32;
-
 		// Settings
 		var changeSpeed = 250;
 
@@ -748,24 +745,24 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 		};
 		document.body.addEventListener( 'keydown', function( e ) {
 			if( going ) {
-				switch( e.which ) {
-					case LEFT:
+				switch( e.key ) {
+					case 'ArrowLeft':
 						e.preventDefault();
 						left();
 						break;
-					case DOWN:
+					case 'ArrowDown':
 						e.preventDefault();
 						down();
 						break;
-					case RIGHT:
+					case 'ArrowRight':
 						e.preventDefault();
 						right();
 						break;
-					case SHIFT:
+					case 'Shift':
 						rowMoveDuration = changeSpeed*10;
 						break;
-					case ESC:
-					case SPACE:
+					case 'Escape':
+					case ' ':
 						e.preventDefault();
 						pauseButton.element.dispatchEvent( new Event( 'click' ) );
 						break;
@@ -774,8 +771,8 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 		} );
 		document.body.addEventListener( 'keyup', function( e ) {
 			if( going ) {
-				switch( e.which ) {
-					case SHIFT:
+				switch( e.key ) {
+					case 'Shift':
 						rowMoveDuration = changeSpeed;
 						break;
 				}
