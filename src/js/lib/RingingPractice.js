@@ -606,7 +606,7 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 			}
 
 			// That's all message
-			if( finished && currentRow > 1 && options.thatsAll ) {0
+			if( finished && currentRow > 1 && options.thatsAll ) {
 				// If we haven't drawn on the final score yet then do so
 				if( !fillTextCache_thatsAllFinished && options.score ) {
 					fillTextCache_thatsAll.context.font = '13px Roboto, sans-serif';
