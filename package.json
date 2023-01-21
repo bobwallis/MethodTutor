@@ -27,7 +27,6 @@
     "gulp-streamify": "^1.0.2",
     "gulp-svgo": "^2.2.1",
     "gulp-terser": "^2.0.0",
-    "gulp-typogr": "^1.0.0",
     "merge-stream": "^2.0.0"
   }
 }

@@ -8,7 +8,6 @@ var less         = require( 'gulp-less' );
 var autoprefixer = require( 'gulp-autoprefixer' );
 var cleanCSS     = require( 'gulp-clean-css' );
 var svgo         = require( 'gulp-svgo' );
-var typogr       = require( 'gulp-typogr' );
 var htmlmin      = require( 'gulp-htmlmin' );
 var terser       = require( 'gulp-terser' );
 var replace      = require( 'gulp-replace' );
@@ -70,7 +69,6 @@ function html() {
 			}
 		} ) )
 		.pipe( replace('{{DATE}}', (new Date()).toISOString().substr(0,19).replace(/[-:T]/g,'') ) )
-		.pipe( typogr( { only: ['amp', 'widont', 'caps', 'smartypants'] } ) )
 		.pipe( htmlmin( { removeComments: true, collapseWhitespace: true } ) )
 		.pipe( gulp.dest( DEST ) );
 };
