@@ -81,7 +81,7 @@ define( ['./PlaceNotation', './Canvas', './MeasureCanvasTextOffset'], function( 
 					scoreboard.innerHTML  = 'Changes: '+rowCount+'<br/>Errors: '+errorCount;
 				},
 				score: function() {
-					return Math.max(0, Math.round(100 - ((errorCount*100)/rowCount)))+'%';
+					return Math.max(0,rowCount-errorCount)+'/'+rowCount+' ('+Math.max(0, Math.round(10*(100 - ((errorCount*100)/rowCount)))/10)+'%)';
 				},
 				correct: function() {
 					rowCount++;
