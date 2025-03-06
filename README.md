@@ -2,7 +2,7 @@
 
 ## Project Goals
 
-Remember JBlueline? Like writing methods out on paper but faster, on your phone, and using mid-2000s technology. This is like that but using mid-2010s technology. I originally wrote it for [my Android app](https://play.google.com/store/apps/details?id=uk.me.rsw.bl), and always planned to also make it available on [my website](https://rsw.me.uk/blueline/), but never got around to it. Time flies, and here we are 7 years later.
+Remember JBlueline? Like writing methods out on paper but faster, on your phone, and using mid-2000s technology. This is like that but using mid-2010s technology. I originally wrote it for [my Android app](https://play.google.com/store/apps/details?id=uk.me.rsw.bl), and it's now linked from [my website](https://rsw.me.uk/blueline/) as well.
 
 ## Output
 
