@@ -130,12 +130,70 @@ define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
 
 
         // Focus the search box when '/' is typed
-		document.body.addEventListener( 'keydown', function( e ) {
-			if( practice_chooser_container.classList.contains( 'active' ) && e.key == '/' && document.activeElement.id !== 'practice_chooser_name' ) {
-				practice_chooser_name.focus();
+        document.body.addEventListener( 'keydown', function( e ) {
+            if( practice_chooser_container.classList.contains( 'active' ) && e.key == '/' && document.activeElement.id !== 'practice_chooser_name' ) {
+                practice_chooser_name.focus();
                 e.preventDefault();
             }
         } );
-    } );
 
+
+        // Tag the active search result
+        $document_on( 'mouseover', '#searchResults li.result', function( e ) {
+            var searchResults_li = e.target.parentElement.children;
+            for( var i = 0; i < searchResults_li.length; i++ ) {
+                searchResults_li[i].classList.remove( 'active' );
+            }
+            e.target.classList.add( 'active' );
+        } );
+        $document_on( 'mouseout', '#searchResults li.result', function( e ) {
+            e.target.classList.remove( 'active' );
+        } );
+
+
+        // Allow keyboard interaction with search results
+        document.body.addEventListener( 'keydown', function( e ) {
+            if( searchResults.style.display === 'block' ) {
+                if( e.key === 'Escape' ) {
+                    document.querySelector( '#searchResults li.close' ).dispatchEvent( new Event( 'click', { bubbles: true } ) );
+                    e.preventDefault();
+                    return;
+                }
+                if( e.key === 'Enter' ) {
+                    var active_searchResults_li = document.querySelector( '#searchResults li.active' );
+                    if( active_searchResults_li !== null ) {
+                        active_searchResults_li.dispatchEvent( new Event( 'click', { bubbles: true } ) );
+                        e.preventDefault();
+                    }
+                    return;
+                }
+                if( e.key === 'ArrowUp' || e.key === 'ArrowDown' ) {
+                    // Find the target
+                    var active_searchResults_li = document.querySelector( '#searchResults li.active' ),
+                        target_searchResults_li;
+                    if( active_searchResults_li !== null && e.key === 'ArrowUp' ) {
+                        target_searchResults_li = active_searchResults_li.previousSibling;
+                    }
+                    if( active_searchResults_li === null && e.key === 'ArrowDown' ) {
+                        target_searchResults_li = document.querySelector( '#searchResults li' );
+                    }
+                    if( active_searchResults_li !== null && e.key === 'ArrowDown' ) {
+                        target_searchResults_li = active_searchResults_li.nextSibling;
+                        if( target_searchResults_li === null ) {
+                            target_searchResults_li = document.querySelector( '#searchResults li' );
+                        }
+                    }
+                    // Switch to it
+                    if( active_searchResults_li !== null ) {
+                        active_searchResults_li.dispatchEvent( new Event( 'mouseout', { bubbles: true } ) );
+                    }
+                    if( target_searchResults_li !== null ) {
+                        target_searchResults_li.dispatchEvent( new Event( 'mouseover', { bubbles: true } ) );
+                    }
+                    e.preventDefault();
+                    return;
+                }
+            }
+        } );
+    } );
 } );
