@@ -1,13 +1,13 @@
 define( function() {
-    return function( eventName, elementSelector, handler ) {
-        document.addEventListener( eventName, function( e ) {
-            // loop parent nodes from the target to the delegation node
-            for( var target = e.target; target && target != this; target = target.parentNode ) {
-                if( target.matches( elementSelector ) ) {
-                    handler.call( target, e );
-                    break;
+    return function( eventNames, elementSelector, handler ) {
+        eventNames.split( ' ' ).forEach( function( eventName ) {
+            document.addEventListener( eventName, function( e ) {
+                if( e.target ) {
+                    var el = e.target.closest( elementSelector );
+                    if( el === null ) { return; }
+                    handler.call( el, e );
                 }
-            }
-        }, false);
+            } );
+        } );
     }
 } );
