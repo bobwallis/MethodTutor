@@ -1,13 +1,15 @@
 define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
 
     ready( function() {
-        var practice_chooser_name                 = document.getElementById( 'practice_chooser_name' ),
+        var practice_chooser_container            = document.getElementById( 'selectMethod' ),
+            practice_chooser_name                 = document.getElementById( 'practice_chooser_name' ),
             practice_chooser_stage                = document.getElementById( 'practice_chooser_stage' ),
             practice_chooser_notation             = document.getElementById( 'practice_chooser_notation' ),
             practice_chooser_ruleOffs             = document.getElementById( 'practice_chooser_ruleOffs' ),
             practice_chooser_allowMethodSelection = document.getElementById( 'practice_chooser_allowMethodSelection' ),
             practice_chooser_help                 = document.getElementById( 'practice_chooser_help' ),
             searchResults                         = document.getElementById( 'searchResults' );
+
 
         // If the setting to disable method choice is set, then hide the relevant UI elements
         practice_chooser_allowMethodSelection.addEventListener( 'change', function() {
@@ -20,6 +22,7 @@ define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
                 document.querySelector( '#head h1' ).innerHTML = (practice_chooser_name.value !== '')? '<span style="font-weight:normal">Method Tutor &raquo;</span> '+practice_chooser_name.value : 'Method Tutor';
             }
         } );
+
 
         // Listen for changes to the name box and initiate a search
         var searchCount = 0
@@ -94,6 +97,7 @@ define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
         practice_chooser_name.addEventListener( 'change', titleChange );
         practice_chooser_name.addEventListener( 'input', titleChange );
 
+
         // Reset the form and focus the search box when the restart button is clicked
         document.querySelector( '#selectMethod input[type="reset"]' ).addEventListener( 'click', function(e) {
             practice_chooser_name.value = '';
@@ -122,6 +126,15 @@ define( ['ready', '$document_on', './Hash'], function( ready, $document_on ) {
         } );
         $document_on( 'click', '#searchResults li.close', function( e ) {
             searchResults.style.display = 'none';
+        } );
+
+
+        // Focus the search box when '/' is typed
+		document.body.addEventListener( 'keydown', function( e ) {
+			if( practice_chooser_container.classList.contains( 'active' ) && e.key == '/' && document.activeElement.id !== 'practice_chooser_name' ) {
+				practice_chooser_name.focus();
+                e.preventDefault();
+            }
         } );
     } );
 
