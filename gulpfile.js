@@ -3,7 +3,7 @@ const plumber      = require('gulp-plumber');
 const mergeStream  = require('merge-stream');
 const streamify    = require('gulp-streamify');
 const svgo         = require('gulp-svgo');
-const htmlmin      = require('gulp-htmlmin');
+const htmlmin      = require('gulp-html-minifier-terser');
 const terser       = require('gulp-terser');
 const replace      = require('gulp-replace');
 const requirejs    = require('gulp-requirejs');
@@ -93,15 +93,17 @@ async function manifest() {
 
 // Images
 async function img() {
-    return mergeStream(
-        src(['src/img/*.svg'])
-            .pipe(svgo())
-            .pipe(dest(DEST)),
-        src(['src/img/*.png'])
-            .pipe(dest(DEST)),
-        src(['src/img/*.ico'])
-            .pipe(dest(DEST))
-    );
+    const svgStream = src(['src/img/*.svg'])
+        .pipe(svgo())
+        .pipe(dest(DEST));
+
+    const pngStream = src(['src/img/*.png'])
+        .pipe(dest(DEST));
+
+    const icoStream = src(['src/img/*.ico'])
+        .pipe(dest(DEST));
+
+    return mergeStream(svgStream, pngStream, icoStream);
 }
 
 // Watcher

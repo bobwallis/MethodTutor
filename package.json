@@ -18,7 +18,7 @@
     "concurrently": "^9.1.2",
     "gulp": "^5.0.0",
     "gulp-amdclean": "^1.1.1",
-    "gulp-htmlmin": "^5.0.1",
+    "gulp-html-minifier-terser": "^7.1.0",
     "gulp-plumber": "^1.2.1",
     "gulp-postcss": "^10.0.0",
     "gulp-replace": "^1.0.0",
