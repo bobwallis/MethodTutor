@@ -6,8 +6,9 @@
     margin: 0;
     padding: 0;
     height: 36px;
-	box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
-    li {
+    box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
+
+    & li {
         flex: 1 1 auto;
         line-height: 36px;
         box-sizing: border-box;
@@ -16,31 +17,37 @@
         padding: 0 5px;
         text-align: center;
         cursor: pointer;
-        border-right: 1px solid @lightGrey;
-        background-color: @lighterGrey;
+        border-right: 1px solid var(--light-grey);
+        background-color: var(--lighter-grey);
         font-size: 12px;
         transition: all .3s cubic-bezier(0.23, 1, 0.32, 1);
         transition-property: background-color, color;
+
         &:first-child {
             border-top-left-radius: 3px;
             border-bottom-left-radius: 3px;
         }
+
         &:last-child {
             border-right: 0;
             border-top-right-radius: 3px;
             border-bottom-right-radius: 3px;
         }
+
         &.active, &:hover {
-            background-color: @white;
+            background-color: var(--white);
         }
+
         &.active, &.correct {
             font-weight: bold;
         }
+
         &.disabled {
             cursor: default;
-            color: @darkGrey;
+            color: var(--dark-grey);
+
             &:hover {
-                background-color: @lighterGrey;
+                background-color: var(--lighter-grey);
             }
         }
     }

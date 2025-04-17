@@ -8,12 +8,12 @@
     height: env(titlebar-area-height, 36px);
     padding: 0;
     margin: 0;
-    background-color: @lighterGrey;
-    color: @darkerGrey;
+    background-color: var(--lighter-grey);
+    color: var(--darker-grey);
     line-height: env(titlebar-area-height, 36px);
     -webkit-app-region: drag;
 
-    h1 {
+    & h1 {
         position: absolute;
         top: 0;
         left: 0;
@@ -32,7 +32,7 @@
         left: 0px;
     }
 
-    #aboutButton {
+    & #aboutButton {
         position: absolute;
         top: calc((env(titlebar-area-height, 36px) - 20px)/2);
         right: calc((env(titlebar-area-height, 36px) - 20px)/2);
@@ -41,6 +41,7 @@
         height: 20px;
         transition: opacity .2s cubic-bezier(0.23, 1, 0.32, 1);
         -webkit-app-region: no-drag;
+
         &:hover {
             cursor: pointer;
             opacity: 0.9;
@@ -50,7 +51,7 @@
 
 @media (prefers-color-scheme: dark) {
     #head {
-        background-color: @darkModeToolbar;
-        color: @lighterGrey;
+        background-color: var(--dark-mode-toolbar);
+        color: var(--lighter-grey);
     }
 }

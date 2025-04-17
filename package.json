@@ -14,19 +14,22 @@
     "last 3 versions"
   ],
   "devDependencies": {
+    "autoprefixer": "^10.4.21",
     "concurrently": "^7.5.0",
     "gulp": "^4.0.2",
     "gulp-amdclean": "^1.1.1",
-    "gulp-autoprefixer": "^8.0.0",
-    "gulp-clean-css": "^4.3.0",
     "gulp-htmlmin": "^5.0.1",
-    "gulp-less": "^5.0.0",
     "gulp-plumber": "^1.2.1",
+    "gulp-postcss": "^10.0.0",
     "gulp-replace": "^1.0.0",
     "gulp-requirejs": "^1.4.0",
     "gulp-streamify": "^1.0.2",
     "gulp-svgo": "^2.2.1",
     "gulp-terser": "^2.0.0",
-    "merge-stream": "^2.0.0"
+    "merge-stream": "^2.0.0",
+    "postcss": "^8.5.3",
+    "postcss-csso": "^6.0.1",
+    "postcss-import": "^16.1.0",
+    "postcss-nesting": "^13.0.1"
   }
 }

@@ -5,10 +5,11 @@ h3, h4 {
     max-width: 340px;
     font-size: 12px;
     line-height: 16px;
-    color: @accent;
+    color: var(--accent);
     text-transform: uppercase;
     font-weight: normal;
 }
+
 h3 {
     text-align: center;
     font-size: 14px;
@@ -21,10 +22,11 @@ p {
     padding-bottom: 10px;
     max-width: 340px;
     font-size: 12px;
-    color: @darkGrey;
+    color: var(--dark-grey);
     transition: color .2s cubic-bezier(0.23, 1, 0.32, 1);
+
     &.pulse {
-        color: @darkerGrey;
+        color: var(--darker-grey);
     }
 }
 
@@ -32,16 +34,19 @@ p {
     margin: 0 auto 16px;
     max-width: 340px;
     height: 32px;
-    li {
+
+    & li {
         flex: 1;
         line-height: 32px;
         font-size: 11px;
         padding: 0;
         transition: background-color .2s cubic-bezier(0.23, 1, 0.32, 1);
-        input {
+
+        & input {
             display: none;
         }
-        label {
+
+        & label {
             display: inline-block;
             width: 100%;
             box-sizing: border-box;
@@ -59,15 +64,16 @@ p {
     max-width: 340px;
     position: relative;
     border-radius: 3px;
-    background-color: @lighterGrey;
+    background-color: var(--lighter-grey);
     width: 100%;
     height: 32px;
     box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
     font-size: 13px;
-    select {
+
+    & select {
         display: block;
-        background-color: @lighterGrey;
-        color: @darkerDarkerGrey;
+        background-color: var(--lighter-grey);
+        color: var(--darker-darker-grey);
         width: 100%;
         height: 100%;
         box-sizing: border-box;
@@ -77,33 +83,37 @@ p {
         font-weight: 300;
         border: 0;
         border-radius: 3px;
+
         &:focus {
             border: 0;
             outline: 0;
-            box-shadow: 0 0 2px @accent;
+            box-shadow: 0 0 2px var(--accent);
         }
     }
-    input {
-	    box-sizing: border-box;
+
+    & input {
+        box-sizing: border-box;
         display: inline-block;
         vertical-align: middle;
-        background-color: @lighterGrey;
-        color: @darkerDarkerGrey;
+        background-color: var(--lighter-grey);
+        color: var(--darker-darker-grey);
         width: 100%;
         height: 100%;
         padding: 0 5px;
         line-height: 32px;
         border: 0;
+
         &:focus {
             outline: 0;
             border: 0;
-            box-shadow: 0 0 2px @accent;
+            box-shadow: 0 0 2px var(--accent);
         }
     }
 }
+
 ::placeholder {
     font-size: small;
-    color: @darkerGrey;
+    color: var(--darker-grey);
 }
 
 input[type="hidden"] {
@@ -111,35 +121,38 @@ input[type="hidden"] {
 }
 
 input[type="submit"], input[type="reset"], input[type="button"], button {
-	display: inline-block;
-	border-radius: 3px;
-	border: 0;
-	padding: 7px 15px;
-	text-align: center;
+    display: inline-block;
+    border-radius: 3px;
+    border: 0;
+    padding: 7px 15px;
+    text-align: center;
     font-weight: bold;
     text-transform: uppercase;
-	transition: background-color 0.5s ease, color 0.5s ease;
-	box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
+    transition: background-color 0.5s ease, color 0.5s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.24);
     cursor: pointer;
 }
+
 input[type="submit"], input[type="button"], button {
-	background-color: lighten(@accent,5%);
-    color: @accentText;
+    background-color: color-mix(in srgb, var(--accent) 95%, white);
+    color: var(--accent-text);
+
     &:hover {
-        background-color: @accent;
-        color: @white;
-    }
-}
-input[type="reset"], .prev_button button {
-	background-color: @lighterGrey;
-    color: @darkerGrey;
-    &:hover {
-        background-color: @white;
-        color: @black;
+        background-color: var(--accent);
+        color: var(--white);
     }
 }
 
-// Initially hide the next button
+input[type="reset"], .prev_button button {
+    background-color: var(--lighter-grey);
+    color: var(--darker-grey);
+
+    &:hover {
+        background-color: var(--white);
+        color: var(--black);
+    }
+}
+
 #selectMethod .next_button, #selectMethod .prev_button {
     transition: opacity 0.2s ease;
     opacity: 0;
@@ -147,42 +160,41 @@ input[type="reset"], .prev_button button {
 }
 
 #practice_chooser_bell {
-    li { display: none; }
-    &._3 {
-        li._3 { display: block; }
-    }
-    &._4 {
-        li._4 { display: block; }
-    }
-    &._5 {
-        li._5 { display: block; }
-    }
-    &._6 {
-        li._6 { display: block; }
-    }
+    & li { display: none; }
+
+    &._3 li._3,
+    &._4 li._4,
+    &._5 li._5,
+    &._6 li._6 { display: block; }
+
     &._7 {
         max-width: 360px;
-        li._7 { display: block; }
+        & li._7 { display: block; }
     }
+
     &._8 {
         max-width: 385px;
-        li._8 { display: block; }
+        & li._8 { display: block; }
     }
+
     &._9 {
         max-width: 410px;
-        li._9 { display: block; }
+        & li._9 { display: block; }
     }
+
     &._10 {
         max-width: 435px;
-        li._10 { display: block; }
+        & li._10 { display: block; }
     }
+
     &._11 {
         max-width: 460px;
-        li._11 { display: block; }
+        & li._11 { display: block; }
     }
+
     &._12 {
         max-width: 485px;
-        li._12 { display: block; }
+        & li._12 { display: block; }
     }
 }
 
@@ -202,13 +214,14 @@ input[type="reset"], .prev_button button {
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
-    border-top: 1px solid @lightGrey;
+    border-top: 1px solid var(--light-grey);
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
-    background-color: @lighterGrey;
+    background-color: var(--lighter-grey);
     width: 100%;
     box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
-    li {
+
+    & li {
         padding: 0 15px;
         list-style: none;
         line-height: 32px;
@@ -216,19 +229,22 @@ input[type="reset"], .prev_button button {
         font-size: 11px;
         cursor: pointer;
         transition: background-color 0.2s ease, color 0.5s ease;
-        border-bottom: 1px solid @lightGrey;
+        border-bottom: 1px solid var(--light-grey);
+
         &.active {
-            background-color: @white;
+            background-color: var(--white);
         }
+
         &:last-child {
             border: 0;
         }
+
         &.close {
             font-size: 10px;
             line-height: 28px;
             height: 28px;
-            background-color: darken(@lighterGrey,2.5%);
-            color: @accent;
+            background-color: color-mix(in srgb, var(--lighter-grey) 97.5%, black);
+            color: var(--accent);
             text-align: right;
         }
     }

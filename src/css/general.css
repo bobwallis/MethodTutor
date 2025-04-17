@@ -1,0 +1,35 @@
+:root {
+    --black: #000;
+    --darker-darker-grey: #4D4B45;
+    --darker-grey: #807D75;
+    --dark-grey: #B0AEA7;
+    --light-grey: #E0DED9;
+    --lighter-grey: #F3F3F3;
+    --white: #FFF;
+    --red: #D11;
+    --accent: #002856;
+    --accent-text: var(--light-grey);
+    --dark-mode-toolbar: #121212;
+}
+
+/* General CSS */
+html, body {
+    padding: 0;
+    margin: 0;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+    font-size: 14px;
+    overflow: hidden;
+    user-select: none;
+}
+
+a {
+    text-decoration: underline;
+    text-decoration-color: #A1C4D0;
+    transition-property: color, text-decoration-color;
+    transition-duration: .1s;
+
+    &:link { color: #29404C; }
+    &:visited { color: #4C2940; }
+    &:active { color: #404C29; }
+    &:hover { text-decoration-color: #29404C; }
+}

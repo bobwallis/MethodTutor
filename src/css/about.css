@@ -5,13 +5,15 @@
     right: 0;
     width: 320px;
     padding: 15px 20px;
-    background-color: @white;
+    background-color: var(--white);
     hyphens: auto;
+
     &.hide {
         opacity: 0;
         pointer-events: none;
         transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
     }
+
     &.active {
         top: calc(2*env(titlebar-area-height, 36px));
         right: env(titlebar-area-height, 36px);
@@ -20,8 +22,9 @@
         pointer-events: auto;
         transition: all 0.2s cubic-bezier(0.175, 0.885, 0.320, 1.275);
     }
-    p {
+
+    & p {
         font-size: 14px;
-        color: @black;
+        color: var(--black);
     }
 }
