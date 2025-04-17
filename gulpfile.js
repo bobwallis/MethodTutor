@@ -1,35 +1,37 @@
-var DEST = './web/';
+const { src, dest, watch, series, parallel } = require('gulp');
+const plumber      = require('gulp-plumber');
+const mergeStream  = require('merge-stream');
+const streamify    = require('gulp-streamify');
+const svgo         = require('gulp-svgo');
+const htmlmin      = require('gulp-htmlmin');
+const terser       = require('gulp-terser');
+const replace      = require('gulp-replace');
+const requirejs    = require('gulp-requirejs');
+const amdclean     = require('gulp-amdclean');
+const postcss      = require('gulp-postcss');
+const atImport     = require('postcss-import');
+const autoprefixer = require('autoprefixer');
+const nesting      = require('postcss-nesting');
+const csso         = require('postcss-csso');
 
-var gulp         = require( 'gulp' );
-var plumber      = require( 'gulp-plumber' );
-var mergeStream  = require( 'merge-stream' );
-var streamify    = require( 'gulp-streamify' );
-var svgo         = require( 'gulp-svgo' );
-var htmlmin      = require( 'gulp-htmlmin' );
-var terser       = require( 'gulp-terser' );
-var replace      = require( 'gulp-replace' );
-var requirejs    = require( 'gulp-requirejs' );
-var amdclean     = require( 'gulp-amdclean' );
-var postcss      = require( 'gulp-postcss' );
-var atImport     = require( 'postcss-import' );
-var autoprefixer = require( 'autoprefixer' );
-var nesting      = require( 'postcss-nesting' );
-var csso         = require( 'postcss-csso' );
+const DEST = './web/';
 
 // Favicon
-function favicon() {
-    return gulp.src( 'src/img/favicon.*' )
-        .pipe( gulp.dest( DEST ) );
+async function favicon() {
+    return src('src/img/favicon.*')
+        .pipe(dest(DEST));
 }
 
 // CSS
-function css() {
-    return gulp.src( 'src/css/style.css' )
-        .pipe( plumber( { errorHandler: function ( err ) {
-            console.log(err);
-            this.emit('end');
-        } } ) )
-        .pipe( postcss([
+async function css() {
+    return src('src/css/style.css')
+        .pipe(plumber({
+            errorHandler: function(err) {
+                console.log(err);
+                this.emit('end');
+            }
+        }))
+        .pipe(postcss([
             atImport({
                 path: ['src/css']
             }),
@@ -37,75 +39,84 @@ function css() {
             autoprefixer(),
             csso()
         ]))
-        .pipe( gulp.dest( DEST ) );
+        .pipe(dest(DEST));
 }
 
 // JS
-function js() {
-    return requirejs( {
-        baseUrl: 'src/js/',
-        include: 'app',
-        paths: {
-            ready:          'lib/ready',
-            '$document_on': 'lib/$document_on'
-        },
-        optimize: 'none',
-        out: 'app.js'
-    } ).on('error', function( error ) { console.log( error ); } )
-        .pipe( amdclean.gulp() )
-        .pipe( streamify( terser() ) )
-        .pipe( gulp.dest( DEST ) );
+async function js() {
+    return new Promise((resolve, reject) => {
+        requirejs({
+            baseUrl: 'src/js/',
+            include: 'app',
+            paths: {
+                ready: 'lib/ready',
+                '$document_on': 'lib/$document_on'
+            },
+            optimize: 'none',
+            out: 'app.js'
+        })
+        .on('error', reject)
+        .pipe(amdclean.gulp())
+        .pipe(streamify(terser()))
+        .pipe(dest(DEST))
+        .on('end', resolve)
+        .on('error', reject);
+    });
 }
 
-function js_serviceWorker() {
-    return gulp.src( 'src/js/service-worker.js' )
-        .pipe( replace('{{DATE}}', (new Date()).toISOString().substr(0,19).replace(/[-:T]/g,'') ) )
-        .pipe( streamify( terser() ) )
-        .pipe( gulp.dest( DEST ) )
+async function js_serviceWorker() {
+    return src('src/js/service-worker.js')
+        .pipe(replace('{{DATE}}', (new Date()).toISOString().substr(0,19).replace(/[-:T]/g,'')))
+        .pipe(streamify(terser()))
+        .pipe(dest(DEST));
 }
 
 // HTML
-function html() {
-    return gulp.src( 'src/html/index.html' )
-        .pipe( plumber( { errorHandler: function ( err ) {
-            console.log( err );
-            this.emit( 'end' );
+async function html() {
+    return src('src/html/index.html')
+        .pipe(plumber({
+            errorHandler: function(err) {
+                console.log(err);
+                this.emit('end');
             }
-        } ) )
-        .pipe( replace('{{DATE}}', (new Date()).toISOString().substr(0,19).replace(/[-:T]/g,'') ) )
-        .pipe( htmlmin( { removeComments: true, collapseWhitespace: true } ) )
-        .pipe( gulp.dest( DEST ) );
+        }))
+        .pipe(replace('{{DATE}}', (new Date()).toISOString().substr(0,19).replace(/[-:T]/g,'')))
+        .pipe(htmlmin({ removeComments: true, collapseWhitespace: true }))
+        .pipe(dest(DEST));
 }
 
 // Manifest
-function manifest() {
-    return gulp.src( 'src/manifest/manifest.json' )
-        .pipe( gulp.dest( DEST ) );
+async function manifest() {
+    return src('src/manifest/manifest.json')
+        .pipe(dest(DEST));
 }
 
 // Images
-function img() {
+async function img() {
     return mergeStream(
-        gulp.src( ['src/img/*.svg'] )
-            .pipe( svgo() )
-            .pipe( gulp.dest( DEST ) ),
-        gulp.src( ['src/img/*.png'] )
-            .pipe( gulp.dest( DEST ) ),
-        gulp.src( ['src/img/*.ico'] )
-            .pipe( gulp.dest( DEST ) )
+        src(['src/img/*.svg'])
+            .pipe(svgo())
+            .pipe(dest(DEST)),
+        src(['src/img/*.png'])
+            .pipe(dest(DEST)),
+        src(['src/img/*.ico'])
+            .pipe(dest(DEST))
     );
 }
 
 // Watcher
-function watch() {
-    gulp.watch( ['src/**/*.css'], css );
-    gulp.watch( ['src/**/*.html'], html );
-    gulp.watch( ['src/**/*.js'], gulp.parallel( js, js_serviceWorker ) );
-    gulp.watch( ['src/manifest/*'], manifest );
+function watchFiles(cb) {
+    watch('src/**/*.css', css);
+    watch('src/**/*.html', html);
+    watch('src/**/*.js', parallel(js, js_serviceWorker));
+    watch('src/manifest/*', manifest);
+    cb();
 }
 
-exports.default = gulp.parallel( css, html, js, js_serviceWorker, img, favicon, manifest );
+// Export tasks
 exports.css = css;
 exports.html = html;
 exports.js = js;
-exports.watch = watch;
+exports.watch = watchFiles;
+exports.build = parallel(css, html, js, js_serviceWorker, img, favicon, manifest);
+exports.default = exports.build;

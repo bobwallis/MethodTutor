@@ -8,15 +8,15 @@
     "url": "git://github.com/bobwallis/MethodTutor.git"
   },
   "scripts": {
-    "start": "concurrently \"gulp && gulp watch\" \"http-server ./web -r\""
+    "start": "concurrently \"gulp && gulp watch\" \"npx http-server ./web -r\""
   },
   "browserslist": [
     "last 3 versions"
   ],
   "devDependencies": {
     "autoprefixer": "^10.4.21",
-    "concurrently": "^7.5.0",
-    "gulp": "^4.0.2",
+    "concurrently": "^9.1.2",
+    "gulp": "^5.0.0",
     "gulp-amdclean": "^1.1.1",
     "gulp-htmlmin": "^5.0.1",
     "gulp-plumber": "^1.2.1",
