@@ -14,15 +14,15 @@
     "last 3 versions"
   ],
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/stream": "^3.0.1",
     "autoprefixer": "^10.4.21",
     "concurrently": "^9.1.2",
     "gulp": "^5.0.0",
-    "gulp-amdclean": "^1.1.1",
     "gulp-html-minifier-terser": "^7.1.0",
     "gulp-plumber": "^1.2.1",
     "gulp-postcss": "^10.0.0",
     "gulp-replace": "^1.0.0",
-    "gulp-requirejs": "^1.4.0",
     "gulp-streamify": "^1.0.2",
     "gulp-svgo": "^2.2.1",
     "gulp-terser": "^2.0.0",
@@ -30,6 +30,7 @@
     "postcss": "^8.5.3",
     "postcss-csso": "^6.0.1",
     "postcss-import": "^16.1.0",
-    "postcss-nesting": "^13.0.1"
+    "postcss-nesting": "^13.0.1",
+    "vinyl-source-stream": "^2.0.0"
   }
 }

@@ -6,8 +6,8 @@ const svgo         = require('gulp-svgo');
 const htmlmin      = require('gulp-html-minifier-terser');
 const terser       = require('gulp-terser');
 const replace      = require('gulp-replace');
-const requirejs    = require('gulp-requirejs');
-const amdclean     = require('gulp-amdclean');
+const rollup       = require('@rollup/stream');
+const source       = require('vinyl-source-stream');
 const postcss      = require('gulp-postcss');
 const atImport     = require('postcss-import');
 const autoprefixer = require('autoprefixer');
@@ -43,25 +43,11 @@ async function css() {
 }
 
 // JS
-async function js() {
-    return new Promise((resolve, reject) => {
-        requirejs({
-            baseUrl: 'src/js/',
-            include: 'app',
-            paths: {
-                ready: 'lib/ready',
-                '$document_on': 'lib/$document_on'
-            },
-            optimize: 'none',
-            out: 'app.js'
-        })
-        .on('error', reject)
-        .pipe(amdclean.gulp())
+function js() {
+    return rollup({ input: 'src/js/app.js' })
+        .pipe(source('app.js'))
         .pipe(streamify(terser()))
-        .pipe(dest(DEST))
-        .on('end', resolve)
-        .on('error', reject);
-    });
+        .pipe(dest(DEST));
 }
 
 async function js_serviceWorker() {
