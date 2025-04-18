@@ -22,8 +22,6 @@ If you want to then you can link directly to a particular method by doing [somet
 
 ## Development
 
-[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/bobwallis/MethodTutor)
-
 I use Visual Studio Code to develop in, and you can too using the above button. But the only real dependencies are NPM and Gulp.
 
 Source code for the various parts of the project are in the `/src` folder. Edit files, and then run `gulp` to build them and deposit distributable versions into the `/web` folder. To watch for changes and automatically rebuild files, run `gulp watch`.
