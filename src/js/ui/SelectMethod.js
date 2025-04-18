@@ -26,7 +26,7 @@ ready(function() {
 
 
     // Listen for changes to the name box and initiate a search
-    var searchCount = 0
+    var searchCount = 0,
         activeSearchCount = -1;
     practice_chooser_name.addEventListener( 'input', function( e ) {
         // Hide the search results if the value is empty

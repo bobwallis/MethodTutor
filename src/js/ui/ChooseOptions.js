@@ -3,7 +3,7 @@ import ready from '../lib/ready.js';
 ready(function() {
     // Listen for changes to the pill selectors
     var radios = document.querySelectorAll( 'ul.tab_group input[type=radio]' );
-    for( i = 0; i < radios.length; i++ ) {
+    for( var i = 0; i < radios.length; i++ ) {
         radios[i].addEventListener( 'click', function( e ) {
             for( var node = e.target.parentElement.parentElement.firstChild; node && node.nodeType === 1; node = node.nextElementSibling || node.nextSibling ) {
                 node.classList.remove( 'active' );

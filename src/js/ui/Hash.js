@@ -16,7 +16,8 @@ var parseCurrentHash = function() {
 
 var Hash = {
     read: function() {
-        var currentHash = parseCurrentHash();
+        var currentHash = parseCurrentHash(),
+            field;
         // Push the values in the hash into the relevant form fields
         for( field in fieldMap ) {
             if( typeof currentHash[field] !== 'undefined' && currentHash[field] !== '' ) {
@@ -36,7 +37,8 @@ var Hash = {
     },
     update: function( e ) {
         var currentHash = parseCurrentHash(),
-            hashString;
+            hashString,
+            field;
         // Read values in the fields into the hash if they are different or if the field is the one that changed
         for( field in fieldMap ) {
             if( fieldMap[field].id === e.target.id || typeof currentHash[field] !== 'undefined' ) {
