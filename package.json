@@ -8,7 +8,9 @@
     "url": "git://github.com/bobwallis/MethodTutor.git"
   },
   "scripts": {
-    "start": "concurrently \"gulp && gulp watch\" \"npx http-server ./web -r\""
+    "start": "concurrently \"npm run build && npm run watch\" \"npx http-server ./web -r\"",
+    "build": "gulp",
+    "watch": "gulp watch"
   },
   "browserslist": [
     "last 3 versions"
