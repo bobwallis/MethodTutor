@@ -44,9 +44,15 @@ async function css() {
 
 // JS
 function js() {
-    return rollup({ input: 'src/js/app.js' })
+    return rollup({
+        input: 'src/js/app.js',
+        output: {
+            format: 'iife',
+            name: 'app'
+        }
+    })
         .pipe(source('app.js'))
-        .pipe(streamify(terser()))
+        .pipe(streamify(terser({ keep_fnames: true, mangle: false })))
         .pipe(dest(DEST));
 }
 
