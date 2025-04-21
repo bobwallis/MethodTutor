@@ -29,7 +29,7 @@ var PlaceNotation = {
 
 		// If stage isn't given try to guess
 		if( typeof stage === 'undefined' ) {
-			stage = Math.max.apply( Math, notation.replace( /( HL |LH|LE)/g , '' ).split( '' ).map( PlaceNotation.charToBell ) ) + 1;
+			stage = Math.max.apply( Math, notation.replace( /( HL |LH|LE)/g , '' ).split( '' ).map( PlaceNotation.charToBell ).filter( function(b) { return typeof b === 'number'; } ) ) + 1;
 		}
 		stageText = PlaceNotation.bellToChar( stage-1 );
 
@@ -318,7 +318,7 @@ var PlaceNotation = {
 		return PlaceNotation.rounds( stage ).reverse();
 	},
 	queens: function( stage ) {
-		if( stage < 4 )  { throw null; }
+		if( stage < 4 )  { throw new Error("Stage must be >= 4 for Queens notation."); }
 		if( stage % 2 === 1 ) { return PlaceNotation.queens( stage + 1 ).slice( 1 ).map( function( e ) { return --e; } ); }
 		var row = new Array( stage ), i = stage, mid = Math.ceil( stage / 2 );
 		while( i-- > mid ) { row[i] = 1 + (i-mid)*2; }
@@ -337,7 +337,7 @@ var PlaceNotation = {
 		return row;
 	},
 	whittingtons: function( stage ) {
-		if( stage < 6 )  { throw null; }
+		if( stage < 6 )  { throw new Error("Stage must be >= 6 for Whittingtons notation."); }
 		if( stage % 2 === 1 ) { return PlaceNotation.whittingtons( stage + 1 ).slice( 1 ).map( function( e ) { return --e; } ); }
 		var row = new Array( stage ), i = stage, mid = Math.floor( stage / 2 );
 		while( i-- > stage - 3 ) { row[i] = 1 + (i-mid)*2; }
