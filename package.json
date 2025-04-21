@@ -9,8 +9,8 @@
   },
   "scripts": {
     "start": "npm run build && concurrently \"npm run watch\" \"npm run serve\"",
-    "build": "gulp",
-    "watch": "gulp watch",
+    "build": "npx gulp build",
+    "watch": "npx gulp watch",
     "serve": "npx http-server ./web -r"
   },
   "browserslist": [
