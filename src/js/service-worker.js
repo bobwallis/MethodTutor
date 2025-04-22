@@ -9,7 +9,6 @@ var urlsToCache = [
     self.registration.scope + 'manifest.json',
     self.registration.scope + 'right.svg',
     self.registration.scope + 'style.css',
-    self.registration.scope + 'tutor.svg',
     self.registration.scope + 'x.svg'
 ];
 
