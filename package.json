@@ -8,32 +8,41 @@
     "url": "git://github.com/bobwallis/MethodTutor.git"
   },
   "scripts": {
-    "start": "npm run build && concurrently \"npm run watch\" \"npm run serve\"",
-    "build": "npx gulp build",
-    "watch": "npx gulp watch",
-    "serve": "npx http-server ./web -r"
+    "build:css": "postcss src/css/style.css -o web/style.css --use postcss-import --use postcss-nesting --use postcss-csso --map.inline false",
+    "build:js": "rollup src/js/app.js --file web/app.js --format iife --name app --sourcemap --compact && terser web/app.js --compress toplevel=true,pure_getters=true,unsafe=true,passes=3 --mangle --keep-fnames --source-map 'content=web/app.js.map' -o web/app.js",
+    "build:serviceworker": "cp src/js/service-worker.js web/service-worker.js && replace-in-file '{{DATE}}' $(date -u +%Y%m%d%H%M%S) web/service-worker.js && terser web/service-worker.js -o web/service-worker.js",
+    "build:html": "cp src/html/index.html web/index.html && replace-in-file '{{DATE}}' $(date -u +%Y%m%d%H%M%S) web/index.html && html-minifier-terser --collapse-whitespace --remove-comments -o web/index.html web/index.html",
+    "build:img": "svgo -f src/img -o web && cp src/img/*.png web/ && cp src/img/*.ico web/",
+    "build:manifest": "cp src/manifest/manifest.json web/",
+    "build:favicon": "cp src/img/favicon.* web/",
+    "build": "npm-run-all --parallel build:*",
+    "watch": "npm-run-all --parallel watch:*",
+    "watch:css": "onchange 'src/css/**/*.css' -- npm run build:css",
+    "watch:js": "onchange 'src/js/**/*.js' -- npm run build:js",
+    "watch:serviceworker": "onchange 'src/js/service-worker.js' -- npm run build:serviceworker",
+    "watch:html": "onchange 'src/html/**/*.html' -- npm run build:html",
+    "watch:img": "onchange 'src/img/**/*.{svg,png,ico}' -- npm run build:img",
+    "watch:manifest": "onchange 'src/manifest/manifest.json' -- npm run build:manifest",
+    "watch:favicon": "onchange 'src/img/favicon.*' -- npm run build:favicon",
+    "serve": "npx http-server ./web -r",
+    "start": "npm-run-all build --parallel watch serve"
   },
   "browserslist": [
     "last 3 versions"
   ],
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^15.0.1",
-    "@rollup/stream": "^3.0.1",
     "autoprefixer": "^10.4.21",
-    "concurrently": "^9.1.2",
-    "gulp": "^5.0.0",
-    "gulp-html-minifier-terser": "^7.1.0",
-    "gulp-plumber": "^1.2.1",
-    "gulp-postcss": "^10.0.0",
-    "gulp-replace": "^1.0.0",
-    "gulp-streamify": "^1.0.2",
-    "gulp-svgo": "^2.2.1",
-    "gulp-terser": "^2.0.0",
-    "merge-stream": "^2.0.0",
+    "html-minifier-terser": "^7.2.0",
+    "npm-run-all": "^4.1.5",
+    "onchange": "^7.1.0",
     "postcss": "^8.5.3",
+    "postcss-cli": "^10.1.0",
     "postcss-csso": "^6.0.1",
     "postcss-import": "^16.1.0",
     "postcss-nesting": "^13.0.1",
-    "vinyl-source-stream": "^2.0.0"
+    "replace-in-file": "^7.2.0",
+    "rollup": "^4.40.0",
+    "svgo": "^3.3.2",
+    "terser": "^5.39.0"
   }
 }
