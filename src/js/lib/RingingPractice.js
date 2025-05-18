@@ -333,10 +333,10 @@ var RingingPractice = function( options ) {
 			context.fillStyle = '#333';
 			context.strokeText( 'Use the arrow keys or tap the', canvasWidth/2, 10+60*2/4 );
 			context.strokeText( 'screen to navigate. Press \'Esc\'', canvasWidth/2, 10+60*3/4 );
-			context.strokeText( 'or the \'X\' above ↗ to pause.', canvasWidth/2, 10+60 );
+			context.strokeText( 'or the \'×\' above ↗ to pause.', canvasWidth/2, 10+60 );
 			context.fillText( 'Use the arrow keys or tap the', canvasWidth/2, 10+60*2/4 );
 			context.fillText( 'screen to navigate. Press \'Esc\'', canvasWidth/2, 10+60*3/4 );
-			context.fillText( 'or the \'X\' above ↗ to pause.', canvasWidth/2, 10+60 );
+			context.fillText( 'or the \'×\' above ↗ to pause.', canvasWidth/2, 10+60 );
 			// Check if the clearance rectangle needs to be increased
 			// Calculate the width of what we just drew
 			var width = context.measureText( 'screen to navigate. Press \'Esc\'' ).width;
