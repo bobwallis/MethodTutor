@@ -22,10 +22,10 @@ If you want to then you can link directly to a particular method by doing [somet
 
 ## Development
 
-I use Visual Studio Code to develop in, and you can too using the above button. But the only real dependencies are NPM and Gulp.
+I use Visual Studio Code to develop in, but the only real dependency is NPM.
 
-Source code for the various parts of the project are in the `/src` folder. Edit files, and then run `gulp` to build them and deposit distributable versions into the `/web` folder. To watch for changes and automatically rebuild files, run `gulp watch`.
+Source code for the various parts of the project are in the `/src` folder. Edit files, and then run `npm run build` to build and deposit distributable versions into the `/web` folder. To watch for changes and automatically rebuild files, run `npm run watch`.
 
-To test the code, run `npm start` which will launch a web server that you can open at <http://localhost:8080>. If you are using Visual Studio Code you can use the 'Run & Debug' functionality.
+To test the code, run `npm start` which will build, watch for changes, and launch a web server that you can open at <http://localhost:8080>. If you are using Visual Studio Code you can use the 'Run & Debug' functionality.
 
 To update the project's dependencies with new minor releases, run `npm update --save-dev`. Run `npm outdated` to find new major versions, and think about upgrading to them.
