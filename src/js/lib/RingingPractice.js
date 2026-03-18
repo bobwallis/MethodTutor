@@ -37,6 +37,10 @@ var RingingPractice = function( options ) {
 	if( options.hbIndicator !== 1 && options.hbIndicator !== -1 ) {
 		options.hbIndicator = 0;
 	}
+	var hasRuleOffs = typeof options.ruleOffs === 'object',
+		hasPlaceStarts = typeof options.placeStarts === 'object',
+		hasIntroduction = options.introduction,
+		hasHBIndicator = options.hbIndicator !== 0;
 
 	// Sizing
 	var canvasWidth   = (typeof options.width == 'number')? options.width : container.offsetWidth,
@@ -237,7 +241,7 @@ var RingingPractice = function( options ) {
 
 
 	// Cache some reusable images to avoid excessive use of slow fillText calls in the drawing function that's meant to run at 60fps
-	if( options.hbIndicator ) {
+	if( hasHBIndicator ) {
 		var fillTextCache_hbIndicator = function( char ) {
 			var cacheCanvas = new Canvas( {
 				id: 'cc'+char,
@@ -261,7 +265,7 @@ var RingingPractice = function( options ) {
 		var fillTextCache_hIndicator = fillTextCache_hbIndicator( 'H' );
 		var fillTextCache_bIndicator = fillTextCache_hbIndicator( 'B' );
 	}
-	if( typeof options.placeStarts === 'object' ) {
+	if( hasPlaceStarts ) {
 		var fillTextCache_placeStarts = ( function() {
 			var x, y;
 			var cacheCanvas = new Canvas( {
@@ -308,7 +312,7 @@ var RingingPractice = function( options ) {
 		}
 		return cacheCanvas;
 	})();
-	if( options.introduction ) {
+	if( hasIntroduction ) {
 		var fillTextCache_introduction = (function() {
 			// Create the canvas and set global options
 			var cacheCanvas = new Canvas( {
@@ -461,6 +465,13 @@ var RingingPractice = function( options ) {
 			rows.push( PlaceNotation.apply( notation[(rows.length-1) % notation.length], rows[rows.length-1] ) );
 		}
 	}
+	var bellPositions = rows.map( function( row ) {
+		var positions = new Array( stage );
+		for( var bellIndex = 0; bellIndex < row.length; ++bellIndex ) {
+			positions[row[bellIndex]] = bellIndex;
+		}
+		return positions;
+	} );
 
 	// Variables used during drawing
 	var context      = canvas.context;
@@ -468,10 +479,13 @@ var RingingPractice = function( options ) {
 	var canvasPaused = false;
 	var finished     = false;
 	var currentPos, nextPos, currentRow, targetRow, dotY, previousTimestamp, currentRowAtTimeOfLastTargetRowSet;
+	var snapToDevicePixel = function( value ) {
+		return Math.round( value * canvas.scale ) / canvas.scale;
+	};
 
 	var setup = function() {
-		currentPos = rows[0].indexOf( following );
-		nextPos    = rows[1].indexOf( following );
+		currentPos = bellPositions[0][following];
+		nextPos    = bellPositions[1][following];
 		currentRow = 0;
 		targetRow  = 0;
 		dotY       = canvasHeight/2;
@@ -502,7 +516,7 @@ var RingingPractice = function( options ) {
 			controls.deactivate();
 		}
 		else {
-			nextPos = rows[targetRow+1].indexOf( following );
+			nextPos = bellPositions[targetRow+1][following];
 		}
 	};
 
@@ -551,7 +565,11 @@ var RingingPractice = function( options ) {
 			x, y,
 			comingFromPosition, goingToPosition,
 			currentRowCeil  = Math.ceil( currentRow ),
-			currentRowFloor = Math.floor( currentRow );
+			currentRowFloor = Math.floor( currentRow ),
+			currentRowFraction = currentRow%1,
+			isCurrentRowInteger = currentRowFraction === 0,
+			currentRowFloorPositions = bellPositions[currentRowFloor],
+			currentRowCeilPositions = bellPositions[currentRowCeil];
 
 		// Clear
 		context.clearRect( clearLeft, 0, clearWidth, canvasHeight );
@@ -573,39 +591,54 @@ var RingingPractice = function( options ) {
 		context.drawImage( fillTextCache_guides.element, 0, canvasHeight - 22, canvasWidth, 22 );
 
 		// Draw rules offs
-		if( typeof options.ruleOffs === 'object' ) {
+		if( hasRuleOffs ) {
 			y = 1;
+			var ruleOffLeftX = paddingForLeftMostPosition - (bellWidth/3),
+				ruleOffRightX = paddingForLeftMostPosition + ((stage-1)*bellWidth) + (bellWidth/3),
+				highlightRuleOffY = null;
 			context.lineWidth = 1;
 			context.setLineDash( [3,1] );
+			context.strokeStyle = '#999';
+			context.beginPath();
 			for( i = going? currentRowFloor+1 : currentRowFloor; y > 0 && i > 0; --i ) {
-				y = dotY - (currentRowFloor-i+(currentRow%1)+0.5)*rowHeight;
+				y = dotY - (currentRowFloor-i+currentRowFraction+0.5)*rowHeight;
 				if( (i-options.ruleOffs.from)%options.ruleOffs.every === 0 ) {
-					context.strokeStyle = (i==(currentRowFloor+1))? 'rgba(153,153,153,'+ Math.round((currentRow%1)*10)/10 +')' : '#999';
-					context.beginPath();
-					context.moveTo( paddingForLeftMostPosition - (bellWidth/3), y );
-					context.lineTo( paddingForLeftMostPosition + ((stage-1)*bellWidth) + (bellWidth/3), y );
-					context.stroke();
+					if( i == (currentRowFloor+1) ) {
+						highlightRuleOffY = y;
+					}
+					else {
+						context.moveTo( ruleOffLeftX, y );
+						context.lineTo( ruleOffRightX, y );
+					}
 				}
+			}
+			context.stroke();
+			if( highlightRuleOffY !== null ) {
+				context.strokeStyle = 'rgba(153,153,153,'+ Math.round(currentRowFraction*10)/10 +')';
+				context.beginPath();
+				context.moveTo( ruleOffLeftX, highlightRuleOffY );
+				context.lineTo( ruleOffRightX, highlightRuleOffY );
+				context.stroke();
 			}
 		}
 
 		// Draw place starts
-		if( typeof options.placeStarts === 'object' ) {
+		if( hasPlaceStarts ) {
 			x = paddingForLeftMostPosition + (stage*bellWidth) + 5;
 			y = 1;
 			for( i = going? currentRowCeil : currentRowCeil-(options.thatsAll?1:0); y > 0 && i >= 0; --i ) {
-				y = dotY - (currentRowFloor-i+(currentRow%1)+0.5)*rowHeight;
+				y = dotY - (currentRowFloor-i+currentRowFraction+0.5)*rowHeight;
 				if( (i-options.placeStarts.from)%options.placeStarts.every === 0 ) {
-					if( i == (currentRowFloor+1) ) { context.globalAlpha = currentRow%1; }
-					context.drawImage( fillTextCache_placeStarts.element, Math.floor(rows[i].indexOf( following )*22*fillTextCache_placeStarts.scale), 0, Math.floor(22*fillTextCache_placeStarts.scale), Math.floor(22*fillTextCache_placeStarts.scale), x-11, y-11, 22, 22 );
+					if( i == (currentRowFloor+1) ) { context.globalAlpha = currentRowFraction; }
+					context.drawImage( fillTextCache_placeStarts.element, Math.floor(bellPositions[i][following]*22*fillTextCache_placeStarts.scale), 0, Math.floor(22*fillTextCache_placeStarts.scale), Math.floor(22*fillTextCache_placeStarts.scale), snapToDevicePixel(x-11), snapToDevicePixel(y-11), 22, 22 );
 					if( i == (currentRowFloor+1) ) { context.globalAlpha = 1; }
 				}
 			}
 		}
 
 		// Introduction message
-		if( dotY - (currentRow*rowHeight) > 0 && options.introduction ) {
-			context.drawImage( fillTextCache_introduction.element, 0, dotY - (currentRow*rowHeight) - 120, canvasWidth, 90 );
+		if( dotY - (currentRow*rowHeight) > 0 && hasIntroduction ) {
+			context.drawImage( fillTextCache_introduction.element, 0, snapToDevicePixel(dotY - (currentRow*rowHeight) - 120), canvasWidth, 90 );
 		}
 
 		// That's all message
@@ -618,15 +651,17 @@ var RingingPractice = function( options ) {
 				fillTextCache_thatsAllFinished = true;
 			}
 			// Otherwise just paste in the pre-rendered text
-			y = dotY + (1 - ((currentRow%1 === 0)? 1 : currentRow%1))*rowHeight + 20;
-			context.globalAlpha = (currentRow%1 === 0)? 1 : currentRow%1;
-			context.drawImage( fillTextCache_thatsAll.element, 0, y, canvasWidth, 40 );
+			y = dotY + (1 - (isCurrentRowInteger? 1 : currentRowFraction))*rowHeight + 20;
+			context.globalAlpha = isCurrentRowInteger? 1 : currentRowFraction;
+			context.drawImage( fillTextCache_thatsAll.element, 0, snapToDevicePixel(y), canvasWidth, 40 );
 			context.globalAlpha = 1;
 		}
 
 		// Handstroke/Backstroke indicator
-		if( options.hbIndicator !== 0 ) {
+		if( hasHBIndicator ) {
 			var toI, fromI;
+			var hbIndicatorX = snapToDevicePixel( paddingForLeftMostPosition-bellWidth-8 );
+			var hbIndicatorY = snapToDevicePixel( dotY-8 );
 			if( ( currentRowFloor%2 === 0 && options.hbIndicator === 1 ) || ( currentRowFloor%2 === 1 && options.hbIndicator === -1 ) ) {
 				toI   = fillTextCache_hIndicator.element;
 				fromI = fillTextCache_bIndicator.element;
@@ -635,17 +670,17 @@ var RingingPractice = function( options ) {
 				fromI = fillTextCache_hIndicator.element;
 				toI   = fillTextCache_bIndicator.element;
 			}
-			if( currentRow%1 === 0 ) {
-				context.drawImage( fromI, paddingForLeftMostPosition-bellWidth-8, dotY-8, 16, 16 );
+			if( isCurrentRowInteger ) {
+				context.drawImage( fromI, hbIndicatorX, hbIndicatorY, 16, 16 );
 			}
-			else if( currentRow%1 > 0.66 ) {
-				context.drawImage( toI, paddingForLeftMostPosition-bellWidth-8, dotY-8, 16, 16 );
+			else if( currentRowFraction > 0.66 ) {
+				context.drawImage( toI, hbIndicatorX, hbIndicatorY, 16, 16 );
 			}
 			else {
-				context.globalAlpha = (currentRow%1)/0.66;
-				context.drawImage( toI, paddingForLeftMostPosition-bellWidth-8, dotY-8, 16, 16 );
-				context.globalAlpha = 1 - ((currentRow%1)/0.66);
-				context.drawImage( fromI, paddingForLeftMostPosition-bellWidth-8, dotY-8, 16, 16 );
+				context.globalAlpha = currentRowFraction/0.66;
+				context.drawImage( toI, hbIndicatorX, hbIndicatorY, 16, 16 );
+				context.globalAlpha = 1 - (currentRowFraction/0.66);
+				context.drawImage( fromI, hbIndicatorX, hbIndicatorY, 16, 16 );
 				context.globalAlpha = 1;
 			}
 		}
@@ -659,9 +694,9 @@ var RingingPractice = function( options ) {
 				if( options.lines[i] === null || typeof options.lines[i].color !== 'string' ) {
 					continue;
 				}
-				comingFromPosition = rows[currentRowFloor].indexOf( i );
-				goingToPosition    = rows[currentRowCeil].indexOf( i );
-				x = paddingForLeftMostPosition + (bellWidth * ((currentRow == currentRowCeil)? goingToPosition : comingFromPosition + ((currentRow%1)*(goingToPosition - comingFromPosition)) ));
+				comingFromPosition = currentRowFloorPositions[i];
+				goingToPosition    = currentRowCeilPositions[i];
+				x = paddingForLeftMostPosition + (bellWidth * ((currentRow == currentRowCeil)? goingToPosition : comingFromPosition + (currentRowFraction*(goingToPosition - comingFromPosition)) ));
 				y = dotY;
 				context.strokeStyle = options.lines[i].color;
 				context.lineWidth   = options.lines[i].width;
@@ -671,7 +706,7 @@ var RingingPractice = function( options ) {
 				y -= (currentRow - currentRowFloor)*rowHeight;
 				context.lineTo( x, y );
 				for( j = 1; (typeof rows[currentRowFloor-j] !== 'undefined') && y > 0; j++ ) {
-					x  = paddingForLeftMostPosition + (bellWidth * rows[currentRowFloor-j].indexOf( i ));
+					x  = paddingForLeftMostPosition + (bellWidth * bellPositions[currentRowFloor-j][i]);
 					y -= rowHeight;
 					context.lineTo( x, y );
 				}
@@ -680,9 +715,9 @@ var RingingPractice = function( options ) {
 		}
 
 		// Draw the user's dot
-		comingFromPosition = rows[currentRowFloor].indexOf( following );
-		goingToPosition    = rows[currentRowCeil].indexOf( following );
-		x = paddingForLeftMostPosition + (bellWidth * ((currentRow == currentRowCeil)? goingToPosition : comingFromPosition + ((currentRow%1)*(goingToPosition - comingFromPosition)) ));
+		comingFromPosition = currentRowFloorPositions[following];
+		goingToPosition    = currentRowCeilPositions[following];
+		x = paddingForLeftMostPosition + (bellWidth * ((currentRow == currentRowCeil)? goingToPosition : comingFromPosition + (currentRowFraction*(goingToPosition - comingFromPosition)) ));
 		y = dotY;
 		context.fillStyle = options.lines[following].color;
 		context.beginPath();
@@ -693,16 +728,16 @@ var RingingPractice = function( options ) {
 		// Draw messages
 		if( fillTextCache_messagesText.byRow.length > 0 && (typeof fillTextCache_messagesText.byRow[currentRowFloor] !== 'undefined' || typeof fillTextCache_messagesText.byRow[currentRowCeil] !== 'undefined') ) {
 			if( fillTextCache_messagesText.byRow[currentRowCeil] === fillTextCache_messagesText.byRow[currentRowFloor] ) {
-				context.drawImage( fillTextCache_messagesText.canvases[fillTextCache_messagesText.byRow[currentRowFloor]].element, 0, dotY + 15, canvasWidth, 40 );
+				context.drawImage( fillTextCache_messagesText.canvases[fillTextCache_messagesText.byRow[currentRowFloor]].element, 0, snapToDevicePixel(dotY + 15), canvasWidth, 40 );
 			}
 			else {
 				if( typeof fillTextCache_messagesText.byRow[currentRowCeil] !== 'undefined' ) {
-					context.globalAlpha = currentRow%1;
-					context.drawImage( fillTextCache_messagesText.canvases[fillTextCache_messagesText.byRow[currentRowCeil]].element, 0, dotY + 15, canvasWidth, 40 );
+					context.globalAlpha = currentRowFraction;
+					context.drawImage( fillTextCache_messagesText.canvases[fillTextCache_messagesText.byRow[currentRowCeil]].element, 0, snapToDevicePixel(dotY + 15), canvasWidth, 40 );
 				}
 				if( typeof fillTextCache_messagesText.byRow[currentRowFloor] !== 'undefined' ) {
-					context.globalAlpha = 1 - (currentRow%1);
-					context.drawImage( fillTextCache_messagesText.canvases[fillTextCache_messagesText.byRow[currentRowFloor]].element, 0, dotY + 15, canvasWidth, 40 );
+					context.globalAlpha = 1 - currentRowFraction;
+					context.drawImage( fillTextCache_messagesText.canvases[fillTextCache_messagesText.byRow[currentRowFloor]].element, 0, snapToDevicePixel(dotY + 15), canvasWidth, 40 );
 				}
 				context.globalAlpha = 1;
 			}
@@ -714,13 +749,13 @@ var RingingPractice = function( options ) {
 				maxOverlayMessage = Math.ceil( Math.min( currentRow + 3,  ( (canvasHeight - dotY) + (currentRow*rowHeight))/rowHeight ) );
 			for( i = minOverlayMessage; i < maxOverlayMessage; ++i ) {
 				if( typeof fillTextCache_overlayMessagesText[i] !== 'undefined' ) {
-					if( i + 1 >= maxOverlayMessage && currentRow%1 > 0  ) {
-						context.globalAlpha = currentRow%1;
-						context.drawImage( fillTextCache_overlayMessagesText[i].element, 0, dotY - (3/2 + currentRow - i)*rowHeight, canvasWidth, rowHeight );
+					if( i + 1 >= maxOverlayMessage && currentRowFraction > 0  ) {
+						context.globalAlpha = currentRowFraction;
+						context.drawImage( fillTextCache_overlayMessagesText[i].element, 0, snapToDevicePixel(dotY - (3/2 + currentRow - i)*rowHeight), canvasWidth, rowHeight );
 						context.globalAlpha = 1;
 					}
 					else {
-						context.drawImage( fillTextCache_overlayMessagesText[i].element, 0, dotY - (3/2 + currentRow - i)*rowHeight, canvasWidth, rowHeight );
+						context.drawImage( fillTextCache_overlayMessagesText[i].element, 0, snapToDevicePixel(dotY - (3/2 + currentRow - i)*rowHeight), canvasWidth, rowHeight );
 					}
 				}
 			}
