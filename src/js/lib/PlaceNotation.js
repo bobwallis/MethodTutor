@@ -1,9 +1,33 @@
-// Parse and handle place notation for change ringing
+/**
+ * Parse and transform place notation used in change ringing.
+ *
+ * This module provides helpers for:
+ * - Translating between bell indexes and display characters.
+ * - Expanding abbreviated or variant notation into a normalised full form.
+ * - Parsing notation into permutation arrays used by the tutor runtime.
+ * - Building and comparing common rows (rounds/queens/etc.) and applying changes.
+ */
 var PlaceNotation = {
 	bellToCharMap: ['1','2','3','4','5','6','7','8','9','0','E','T','A','B','C','D','F','G','H','J','K','L','M','N','P','Q','R','S','U','V','W','Y','Z'],
+	/**
+	 * Convert a zero-based bell index into the character used in notation/rows.
+	 *
+	 * @param {number} bell Zero-based bell index.
+	 * @returns {string} Display character for that bell.
+	 */
 	bellToChar: function( bell ) {
 		return PlaceNotation.bellToCharMap[parseInt( bell, 10 )];
 	},
+	/**
+	 * Convert a notation character back into a zero-based bell index.
+	 *
+	 * Numeric bells are stored 1-based in notation, so `1` becomes `0`, `2`
+	 * becomes `1`, and so on. Extended stage characters (for example `0`, `E`,
+	 * `T`) are resolved through `bellToCharMap`.
+	 *
+	 * @param {string} ch Notation character.
+	 * @returns {?number} Zero-based bell index, or `null` if unsupported.
+	 */
 	charToBell: function( ch ) {
 		var bell = parseInt( ch, 10 );
 		if( isNaN( bell ) || bell === 0 ) {
@@ -17,8 +41,20 @@ var PlaceNotation = {
 		}
 		return bell;
 	},
+	/**
+	 * Normalise notation from multiple shorthand formats into canonical dot-separated form.
+	 *
+	 * Supports common inputs used by ringers (e.g. `-`, `x`, `HL/LH`, ampersand-style
+	 * symmetry, microSiril comma blocks, lead-head letter prefixes, and jump-change
+	 * sections). The output is suitable for `parse()`.
+	 *
+	 * @param {string} notation Raw notation string from user input or external data.
+	 * @param {number} [stage] Number of bells; guessed from notation when omitted.
+	 * @returns {string} Canonical notation string.
+	 */
 	expand: function( notation, stage ) {
-		// Tries to normalise place notation given in abbreviated form into full notation
+		// Normalisation happens in three broad stages: (1) clean the incoming string,
+		// (2) expand shorthand/lead-head variants, then (3) canonicalise each exploded piece.
 		var fullNotation, matches, stageText;
 
 		fullNotation = notation
@@ -51,7 +87,7 @@ var PlaceNotation = {
 			fullNotation = fullNotation.replace( matches[0], PlaceNotation.expandHalf( matches[1] ) );
 		}
 
-		// Parse microSiril format notation
+		// Parse explicit microSiril blocks before falling back to looser assumptions.
 		if( fullNotation.indexOf( ',' ) !== -1 ) {
 			var splitOnComma = fullNotation.split( ',' ).map( function( s ) { return s.trim(); } );
 			if( splitOnComma.reduce( function( prev, cur ) { // If every block starts with either an & or a +
@@ -155,7 +191,7 @@ var PlaceNotation = {
 			.replace( /\.+/g, '.' )       // Remove any unnecessary doubling up of dots
 			.replace( /\.?x\.?/g, 'x' );  // and any .x.
 
-		// Explode the notation so we can work on each piece individually, then join back together
+		// Canonicalise each place-notation fragment independently, then rejoin.
 		fullNotation = PlaceNotation.explode( fullNotation ).map( function( piece ) {
 			// Tidy up 'x' on odd stages
 			if( piece === 'x' ) {
@@ -205,6 +241,15 @@ var PlaceNotation = {
 
 		return fullNotation;
 	},
+	/**
+	 * Expand a symmetrical half-lead block into a full block.
+	 *
+	 * Input may include the `&` marker. Reverse-side jump notation groups are also
+	 * normalised to preserve intended jump direction.
+	 *
+	 * @param {string} notation Symmetrical block (with or without `&`).
+	 * @returns {string} Expanded full block.
+	 */
 	expandHalf: function( notation ) {
 		// Expands a symmetrical block of place notation
 		notation = notation.replace( /^&/, '' );
@@ -225,8 +270,19 @@ var PlaceNotation = {
 		}
 		return (notation + notationReversed.substring( trim )).replace( /\.?(x|-)\.?/g, 'x' ).trim();
 	},
+	/**
+	 * Parse normalised notation into per-change permutation arrays.
+	 *
+	 * Each parsed entry maps destination position -> source position for one change.
+	 * Supports cross changes (`x`), place notation, and jump change forms (`(...)`, `[...]`).
+	 *
+	 * @param {string|string[]} notation Normalised notation string or exploded array.
+	 * @param {number} stage Number of bells.
+	 * @returns {number[][]} Array of permutations.
+	 */
 	parse: function( notation, stage ) {
-		// Parses normalised place notation into permutations
+		// Parse each exploded change into a permutation where index = destination place
+		// and value = source place.
 		var i, j, k, l,
 			parsed = [],
 			exploded = this.explode( notation ),
@@ -303,12 +359,30 @@ var PlaceNotation = {
 		}
 		return parsed;
 	},
+	/**
+	 * Join exploded notation fragments back into string form.
+	 *
+	 * @param {string[]|string} notationArray Exploded notation array or pre-joined string.
+	 * @returns {string} Dot-separated notation string.
+	 */
 	implode: function( notationArray ) {
 		return ( typeof notationArray.join === 'function' )? notationArray.join( '.' ).replace( /\.?x\.?/g, 'x' ) : notationArray;
 	},
+	/**
+	 * Split notation into individual changes.
+	 *
+	 * @param {string|string[]} notation Canonical notation string or already exploded array.
+	 * @returns {string[]} Array of notation fragments.
+	 */
 	explode: function( notation ) {
 		return (typeof notation === 'string')? notation.replace( /x/gi, '.x.' ).split( '.' ).filter( function( e ) { return e !== ''; } ) : notation;
 	},
+	/**
+	 * Build rounds for a given stage as zero-based bell indexes.
+	 *
+	 * @param {number} stage Number of bells.
+	 * @returns {number[]} Rounds row.
+	 */
 	rounds: function( stage ) {
 		var row = new Array( stage ), i = stage;
 		while( i-- ) { row[i] = i; }
@@ -347,6 +421,13 @@ var PlaceNotation = {
 		while( i-- ) { row[i] = i; }
 		return row;
 	},
+	/**
+	 * Return whether two rows are identical.
+	 *
+	 * @param {number[]} row1 First row.
+	 * @param {number[]} row2 Second row.
+	 * @returns {boolean} True when rows contain the same bells in the same order.
+	 */
 	rowsEqual: function( row1, row2 ) {
 		var i = row1.length;
 		if( i !== row2.length) {
@@ -359,6 +440,13 @@ var PlaceNotation = {
 		}
 		return true;
 	},
+	/**
+	 * Generate every row produced by a notation sequence from a starting row.
+	 *
+	 * @param {number[][]} notation Parsed notation permutations.
+	 * @param {number[]} startRow Starting row.
+	 * @returns {number[][]} Row history including the starting row.
+	 */
 	allRows: function( notation, startRow ) {
 		var rows = [startRow],
 			i = 0, iLim = notation.length;
@@ -368,6 +456,13 @@ var PlaceNotation = {
 		}
 		return rows;
 	},
+	/**
+	 * Apply one permutation (or a list of permutations) to a row.
+	 *
+	 * @param {number[]|number[][]} permutation Permutation or composition of permutations.
+	 * @param {number[]} row Current row.
+	 * @returns {number[]} Transformed row.
+	 */
 	apply: function( permutation, row ) {
 		var permuted;
 		if( typeof permutation[0].forEach === 'function' ) {
@@ -386,6 +481,14 @@ var PlaceNotation = {
 		} while( j-- );
 		return permuted;
 	},
+	/**
+	 * Compute cycle decomposition for a single permutation.
+	 *
+	 * Useful for analysis/debugging of what a change does
+	 *
+	 * @param {number[]} permutation Permutation to analyse.
+	 * @returns {number[][]} Array of cycles.
+	 */
 	cycles: function( permutation ) {
 		var cycles = [],
 			i = permutation.length,
@@ -403,6 +506,13 @@ var PlaceNotation = {
 		}
 		return cycles;
 	},
+	/**
+	 * Return bells that end where they started after a full notation pass.
+	 *
+	 * @param {number[][]} notation Parsed notation permutations.
+	 * @param {number} stage Number of bells.
+	 * @returns {number[]} Bell indexes that hunt.
+	 */
 	huntBells: function( notation, stage ) {
 		var start = this.rounds( stage ),
 			end = this.apply( notation, start ),

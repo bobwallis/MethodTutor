@@ -1,6 +1,12 @@
 import ready from '../lib/ready.js';
 import $document_on from '../lib/$document_on.js';
 
+/**
+ * URL hash synchronisation for method form state.
+ *
+ * Reads startup values from `location.hash`, propagates them into form fields,
+ * and writes updates back so links/bookmarks reproduce current selections.
+ */
 var fieldMap;
 
 var parseCurrentHash = function() {

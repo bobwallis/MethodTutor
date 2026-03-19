@@ -1,5 +1,11 @@
 import ready from '../lib/ready.js';
 
+/**
+ * About dialog controller.
+ *
+ * Inserts/controls the overlay layer and toggles the about panel from header,
+ * overlay clicks, or keyboard escape.
+ */
 ready(function() {
     // Find the about element
     var about = document.getElementById( 'about' );

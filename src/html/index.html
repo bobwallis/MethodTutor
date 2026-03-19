@@ -15,10 +15,12 @@
     <link rel="manifest" href="manifest.json">
 	</head>
 	<body>
+    <!-- App header and global about toggle -->
     <header id="head">
       <h1>Method&nbsp;Tutor</h1>
       <img id="aboutButton" src="about.svg" alt="?" title="About">
     </header>
+    <!-- Step 1: method lookup and basic method metadata -->
     <section id="selectMethod" class="active">
       <div class="prev_button"><input type="reset" value="Clear" /></div>
       <h4>Method&nbsp;Name</h4>
@@ -51,6 +53,7 @@
       <input id="practice_chooser_ruleOffs" name="practice_chooser_ruleOffs" type="hidden">
       <input id="practice_chooser_allowMethodSelection" name="practice_chooser_allowMethodSelection" type="hidden">
     </section>
+    <!-- Step 2: user-specific options before entering tutor mode -->
     <section id="chooseOptions" class="down">
       <div class="prev_button"><button>↑ Set Method</button></div>
       <h3>...</h3>
@@ -76,10 +79,12 @@
       </ul>
       <div class="next_button"><button id="go">Go ↓</button></div>
     </section>
+		<!-- Step 3: runtime tutor host; RingingPractice mounts inside this container -->
 		<section id="tutor" class="down">
       <div class="prev_button"><button>↑ Exit</button></div>
       <div id="practice_container"></div>
     </section>
+    <!-- About popover content displayed with overlay from ui/About.js -->
     <aside id="about" class="hide">
       <p>This is a tool to help <a href="https://en.wikipedia.org/wiki/Change_ringing">bellringers</a> learn&nbsp;<a href="https://en.wikipedia.org/wiki/Method_ringing">methods</a>.</p>
       <p>The source code is <a href="https://github.com/bobwallis/MethodTutor">made available</a> for interested people alongside more detailed documentation, and is released under the&nbsp;GPL.</p>

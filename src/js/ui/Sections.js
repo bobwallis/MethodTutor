@@ -1,6 +1,12 @@
 import ready from '../lib/ready.js';
 import $document_on from '../lib/$document_on.js';
 
+/**
+ * Multi-section navigator.
+ *
+ * Advances the main screen stack by toggling `active`, `up`, and `down` classes
+ * on previous/next button interactions.
+ */
 ready(function() {
     // Listen for clicks to the next / prev buttons
     $document_on( 'click', '.prev_button button', function( e ) {

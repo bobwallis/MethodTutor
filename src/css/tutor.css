@@ -1,3 +1,4 @@
+/* Tutor runtime visuals: canvas area, controls, overlays, and feedback animations. */
 /* uncss:ignore */
 @keyframes button_success {
     0%   { background-color: var(--lighter-grey); }

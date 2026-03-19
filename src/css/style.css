@@ -1,3 +1,9 @@
+/*
+ * CSS entrypoint.
+ *
+ * Import order matters: general primitives first, then layout/components,
+ * then feature-specific screens.
+ */
 @import "general.css";
 @import "section.css";
 @import "tab_group.css";

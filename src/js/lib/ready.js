@@ -1,4 +1,8 @@
-// Helper function that queues functions for execution once the DOM is ready
+/**
+ * Execute a callback after the DOM is ready.
+ *
+ * Runs immediately when `document.readyState` is already beyond `loading`.
+ */
 var ready = function( fn ) {
     if( document.readyState != 'loading' ) {
         fn();

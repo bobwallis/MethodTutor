@@ -2,6 +2,12 @@ import ready from '../lib/ready.js';
 import RingingPractice from '../lib/RingingPractice.js';
 import PlaceNotation from '../lib/PlaceNotation.js';
 
+/**
+ * Tutor runtime launcher.
+ *
+ * Reads configured form options when the user starts practice, derives bell-line
+ * highlighting metadata, and instantiates `RingingPractice` for the active touch.
+ */
 ready(function() {
     // Listen for clicks to the Go button, and destroy then re-create the practice interface
     document.getElementById( 'go' ).addEventListener( 'click', function( e ) {

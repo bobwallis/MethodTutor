@@ -2,11 +2,31 @@ import PlaceNotation from './PlaceNotation.js';
 import Canvas from './Canvas.js';
 import MeasureCanvasTextOffset from './MeasureCanvasTextOffset.js';
 
+/**
+ * Canvas-based ringing tutor runtime.
+ *
+ * Responsibilities:
+ * - Normalise constructor options from UI input.
+ * - Build and own all tutor DOM/canvas controls inside a container.
+ * - Precompute rows and bell positions from parsed notation.
+ * - Run a requestAnimationFrame loop that updates state and redraws the viewport.
+ * - Track score/progress and input feedback while following a selected bell.
+ *
+ * The runtime is intentionally front-loaded: expensive parsing, row generation,
+ * and text rendering are done once during setup so the animation loop mainly
+ * interpolates positions and blits cached canvases.
+ *
+ * @param {Object} options Tutor configuration supplied by the UI.
+ */
 var RingingPractice = function( options ) {
 	// Settings
 	var changeSpeed = 250;
 
-	// Normalise method/interface options
+	// Normalise constructor input into runtime-friendly values.
+	//
+	// The UI can pass strings, parsed notation, explicit rows, or booleans in a few
+	// different shapes. Everything is converted here so later code can assume a stable
+	// representation.
 	var container = (typeof options.container === 'string')? document.getElementById( options.container ) : options.container,
 		stage     = parseInt( options.stage ),
 		notation  = (typeof options.notation  === 'string')? PlaceNotation.parse( PlaceNotation.expand( options.notation, stage ), stage ) : options.notation,
@@ -42,7 +62,7 @@ var RingingPractice = function( options ) {
 		hasIntroduction = options.introduction,
 		hasHBIndicator = options.hbIndicator !== 0;
 
-	// Sizing
+	// Derive a drawing area that leaves room for the bottom control strip.
 	var canvasWidth   = (typeof options.width == 'number')? options.width : container.offsetWidth,
 		canvasHeight  = ((typeof options.height == 'number')? options.height : container.offsetHeight) - 30,
 		bellWidth     = Math.min( 20, (canvasWidth - 40) / stage ),
@@ -64,6 +84,9 @@ var RingingPractice = function( options ) {
 		height: canvasHeight
 	} );
 	container.appendChild( canvas.element );
+
+	// Lightweight UI widgets are created as closures so they can own private DOM state
+	// while exposing only the operations the runtime actually needs.
 
 	// Create the scoreboard
 	var scoreboard = (function() {
@@ -240,7 +263,8 @@ var RingingPractice = function( options ) {
 	})();
 
 
-	// Cache some reusable images to avoid excessive use of slow fillText calls in the drawing function that's meant to run at 60fps
+	// Build off-screen canvases for labels, overlays, and messages before animation starts.
+	// draw() then reuses these canvases rather than issuing many text layout calls per frame.
 	if( hasHBIndicator ) {
 		var fillTextCache_hbIndicator = function( char ) {
 			var cacheCanvas = new Canvas( {
@@ -452,7 +476,8 @@ var RingingPractice = function( options ) {
 		return m;
 	})();
 
-	// Precalculate all rows
+	// Precalculate the touch once, either to a requested row count or until a target finish row.
+	// `rows` is the source of truth for score progression, line drawing, and position interpolation.
 	var rows = [startRow.slice(0)];
 	rows.push( PlaceNotation.apply( notation[0], rows[0] ) );
 	if( typeof finishRow === 'number' ) {
@@ -466,6 +491,7 @@ var RingingPractice = function( options ) {
 		}
 	}
 	var bellPositions = rows.map( function( row ) {
+		// Reverse the row representation so bell -> current place lookup is O(1) during drawing.
 		var positions = new Array( stage );
 		for( var bellIndex = 0; bellIndex < row.length; ++bellIndex ) {
 			positions[row[bellIndex]] = bellIndex;
@@ -473,7 +499,9 @@ var RingingPractice = function( options ) {
 		return positions;
 	} );
 
-	// Variables used during drawing
+	// Mutable runtime state consumed by input handlers, step(), and draw().
+	// `currentRow` is fractional while a move is being animated; `targetRow` advances only
+	// when the user inputs the correct next action.
 	var context      = canvas.context;
 	var going        = false;
 	var canvasPaused = false;
@@ -483,6 +511,7 @@ var RingingPractice = function( options ) {
 		return Math.round( value * canvas.scale ) / canvas.scale;
 	};
 
+	// Reset run state to the beginning of the selected touch.
 	var setup = function() {
 		currentPos = bellPositions[0][following];
 		nextPos    = bellPositions[1][following];
@@ -497,7 +526,7 @@ var RingingPractice = function( options ) {
 	};
 	setup();
 
-	// Do everything required when the user successfully advances to the next row
+	// Handle a successful input: advance progression and stop cleanly when the touch ends.
 	var advance = function( direction ) {
 		if( !going ) { return; }
 		// Advance the various tracking variables
@@ -520,7 +549,7 @@ var RingingPractice = function( options ) {
 		}
 	};
 
-	// Do everything required when there is an error
+	// Handle an incorrect input: visual feedback, optional score update, optional vibration.
 	var error = function( direction ) {
 		buttonFlash( direction, 'error' );
 		errorFlash( direction );
@@ -530,7 +559,9 @@ var RingingPractice = function( options ) {
 		}
 	};
 
-	// Stepper function for animation
+	// Animation stepper: update motion/scroll state and request redraw only when needed.
+	// The dot moves within the precomputed row graph while the viewport scrolls upward
+	// independently to keep the followed bell near the centre of the screen.
 	var rowMoveDuration = changeSpeed;
 	var step = function( timestamp ) {
 		var redrawNeeded = false;
@@ -559,7 +590,9 @@ var RingingPractice = function( options ) {
 	};
 	window.requestAnimationFrame( step );
 
-	// Draws a frame at the current state
+	// Draw one frame from current runtime state onto the main canvas.
+	// Rendering order matters: guides/background first, then optional overlays/messages,
+	// then the traced lines, and finally the followed bell marker on top.
 	var draw = function() {
 		var i, j,
 			x, y,
@@ -685,7 +718,7 @@ var RingingPractice = function( options ) {
 			}
 		}
 
-		// Draw the lines
+		// Draw historic line traces for every highlighted bell before drawing the active dot.
 		if( currentRow > 0 ) {
 			context.setLineDash( [] );
 			context.lineCap  = 'round';
@@ -714,7 +747,7 @@ var RingingPractice = function( options ) {
 			}
 		}
 
-		// Draw the user's dot
+		// Draw the followed bell last so it stays visually prominent over guide lines/messages.
 		comingFromPosition = currentRowFloorPositions[following];
 		goingToPosition    = currentRowCeilPositions[following];
 		x = paddingForLeftMostPosition + (bellWidth * ((currentRow == currentRowCeil)? goingToPosition : comingFromPosition + (currentRowFraction*(goingToPosition - comingFromPosition)) ));
@@ -763,7 +796,7 @@ var RingingPractice = function( options ) {
 	};
 
 
-	// Functions which try to go left/down/right
+	// Input handlers collapse keyboard/touch/click controls onto the same three movement checks.
 	var left = function() {
 		if( going ) {
 			if( nextPos - currentPos <= -1 ) { advance( 'left' ); }

@@ -1,3 +1,4 @@
+/* Main full-screen section stack and transition states (`active`, `up`, `down`). */
 section {
     display: block;
     z-index: 5;

@@ -1,7 +1,12 @@
 import Canvas from './Canvas.js';
 import LocalStorage from './LocalStorage.js';
 
-// Measure text width with a canvas and cache result
+/**
+ * Measure text width for a specific font and cache the result.
+ *
+ * Used by drawing code that needs repeatable text sizing without repeatedly
+ * calling expensive canvas measurement APIs.
+ */
 var measureText = function(text, font) {
 	var width = LocalStorage.getCache( 'Width.'+font+text );
 	if( width === null ) {

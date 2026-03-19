@@ -1,3 +1,4 @@
+/* Full-page dimming overlay used behind the about panel. */
 #overlay {
     position: absolute;
     z-index: 5;

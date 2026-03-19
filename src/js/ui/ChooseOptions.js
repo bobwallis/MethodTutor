@@ -1,5 +1,11 @@
 import ready from '../lib/ready.js';
 
+/**
+ * Option selection interactions for the second setup screen.
+ *
+ * Keeps tab-group state classes in sync with selected radios and adapts
+ * place-bell availability when stage changes.
+ */
 ready(function() {
     // Listen for changes to the pill selectors
     var radios = document.querySelectorAll( 'ul.tab_group input[type=radio]' );

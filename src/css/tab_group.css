@@ -1,3 +1,4 @@
+/* Reusable pill/tab radio-group presentation. */
 .tab_group {
     display: flex;
     flex-direction: row;

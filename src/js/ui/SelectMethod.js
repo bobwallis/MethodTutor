@@ -1,6 +1,12 @@
 import ready from '../lib/ready.js';
 import $document_on from '../lib/$document_on.js';
 
+/**
+ * Method selection screen controller.
+ *
+ * Handles method search, field population, keyboard navigation in search results,
+ * and gating progression to the options screen until required inputs are present.
+ */
 ready(function() {
     var practice_chooser_container            = document.getElementById( 'selectMethod' ),
         practice_chooser_name                 = document.getElementById( 'practice_chooser_name' ),

@@ -1,4 +1,9 @@
-// ES module: simplified DOM event delegation
+/**
+ * Minimal delegated event helper.
+ *
+ * Registers one or more document-level listeners and forwards matching events
+ * to the nearest ancestor that satisfies `elementSelector`.
+ */
 export default function $document_on(eventNames, elementSelector, handler) {
     eventNames.split(' ').forEach(function(eventName) {
         document.addEventListener(eventName, function(e) {

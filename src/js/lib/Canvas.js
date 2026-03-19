@@ -1,7 +1,6 @@
 /**
  * Manages creation of canvas elements to cope with different pixel ratios
  */
-// AMD define wrapper removed; using ES module
 var Canvas = function( options ) {
 	// Create canvas element
 	var queryString = location.href.replace( /^.*?(\?|$)/, '' ),

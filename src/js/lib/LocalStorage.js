@@ -1,4 +1,10 @@
-// ES module: local storage cache and settings
+/**
+ * Namespaced localStorage helpers for Method Tutor.
+ *
+ * Keeps app cache and settings under the `cache_` and `setting_` prefix and
+ * clears cached values when the source `data-age` changes (set on the root
+ * HTML element at build time).
+ */
 var prefix = 'mt_';
 var dataAge = document.getElementsByTagName('html')[0].getAttribute('data-age');
 var LocalStorage = {
@@ -62,7 +68,7 @@ LocalStorage.clearSettings = function() {
 	} );
 };
 
-// Clear out the cache if the app's age has changed
+// Invalidate cached measurements/data after deploys when `data-age` increments.
 var cacheAge = LocalStorage.getItem( 'cacheAge' );
 if( cacheAge === null ) { cacheAge = 0; }
 if( cacheAge < LocalStorage.age ) {

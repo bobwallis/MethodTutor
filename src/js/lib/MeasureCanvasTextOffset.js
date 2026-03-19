@@ -1,16 +1,13 @@
 import Canvas from './Canvas.js';
 import LocalStorage from './LocalStorage.js';
 
-// Measure X and Y text padding for canvas text centering
-/*
-	* Text positioning on a <canvas> is inconsistent across browsers and platforms.
-	* This is a problem when trying to get pixel perfect alignments of text and lines.
-	*
-	* This function, given a font and size, will return the offset needed to be applied
-	* to x and y to centre a single character of the font in a sizeXsize box when drawing
-	* with textAlign=center and baseLine=middle
-	* It caches the result
-*/
+/**
+ * Measure X/Y offsets needed for visually centred canvas text.
+ *
+ * Canvas text metrics vary by browser and pixel ratio. This helper rasterises a
+ * sample glyph, finds its bounds, and returns offsets to apply when drawing with
+ * `textAlign='center'` and `textBaseline='middle'`. Results are cached.
+ */
 var measureXAndYTextPadding = function( size, font, text ) {
 	if( typeof text == 'undefined' ) { text = '0'; }
 	var padding = LocalStorage.getCache( 'Offset.'+font+text );

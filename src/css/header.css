@@ -1,3 +1,4 @@
+/* App title bar styling (including draggable desktop titlebar integration). */
 #head {
     position: absolute;
     z-index: 10;
