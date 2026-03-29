@@ -3,46 +3,22 @@ import ready from '../lib/ready.js';
 /**
  * About dialog controller.
  *
- * Inserts/controls the overlay layer and toggles the about panel from header,
- * overlay clicks, or keyboard escape.
+ * Controls the native about dialog from the header button and relies on
+ * native light-dismiss behavior for backdrop/Escape closure.
  */
 ready(function() {
-    // Find the about element
+    // Find the about dialog
     var about = document.getElementById( 'about' );
 
-    // Create overlay element
-    var overlay = document.createElement( 'div' );
-    overlay.id = 'overlay';
-    overlay.className = 'hide';
-    document.body.insertBefore( overlay, about );
-
-    // Functions to open and close the about box
-    var aboutOpen = false;
+    // Toggle the about dialog from the header button.
     var toggleAbout = function() {
-        aboutOpen? closeAbout() : openAbout();
+        if( about.open ) {
+            about.close();
+        } else {
+            about.showModal();
+        }
     };
-    var openAbout = function() {
-        overlay.className = 'active';
-        about.className   = 'active';
-        aboutOpen = true;
-    };
-    var closeAbout = function() {
-        overlay.className = 'hide';
-        about.className   = 'hide';
-        aboutOpen = false;
-    }
 
     // Add event listeners
     document.getElementById( 'aboutButton' ).addEventListener( 'click', toggleAbout );
-    overlay.addEventListener( 'click', toggleAbout );
-    document.getElementById( 'head' ).addEventListener( 'click', function( e ) {
-        if( !e.target.matches( '#aboutButton' ) ) {
-            closeAbout();
-        }
-    } );
-    document.body.addEventListener( 'keydown', function( e ) {
-        if( e.key === 'Escape' ) {
-            closeAbout();
-        }
-    } );
 });

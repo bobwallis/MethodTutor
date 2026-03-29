@@ -1,31 +1,50 @@
-/* About popover panel placement and open/close state visuals. */
+/* About dialog placement and open-state visuals. */
 #about {
-    position: absolute;
-    z-index: 8;
-    top: env(titlebar-area-height, 36px);
-    right: 0;
+    position: fixed;
+    border: 0;
+    margin: 0;
+    top: calc(2*env(titlebar-area-height, 36px));
+    right: calc(2*env(titlebar-area-height, 36px));
+    left: auto;
     width: 320px;
+    max-width: calc(100vw - 2*env(titlebar-area-height, 36px));
     padding: 15px 20px;
     background-color: var(--white);
+    color: var(--black);
+    box-shadow: 0 8px 25px rgba(0,0,0,.4);
     hyphens: auto;
+    opacity: 0;
+    transform: translate(12px, -8px);
+    transition: opacity .2s cubic-bezier(0.23, 1, 0.32, 1), transform .2s cubic-bezier(0.23, 1, 0.32, 1), overlay .2s cubic-bezier(0.23, 1, 0.32, 1) allow-discrete, display .2s cubic-bezier(0.23, 1, 0.32, 1) allow-discrete;
 
-    &.hide {
-        opacity: 0;
-        pointer-events: none;
-        transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-
-    &.active {
-        top: calc(2*env(titlebar-area-height, 36px));
-        right: env(titlebar-area-height, 36px);
+    &[open] {
         opacity: 1;
-        box-shadow: 0 8px 25px rgba(0,0,0,.4);
-        pointer-events: auto;
-        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+        transform: translate(0, 0);
     }
 
     & p {
         font-size: 14px;
         color: var(--black);
+    }
+}
+
+#about::backdrop {
+    background-color: var(--white);
+    opacity: 0;
+    transition: opacity .2s cubic-bezier(0.23, 1, 0.32, 1), overlay .2s cubic-bezier(0.23, 1, 0.32, 1) allow-discrete, display .2s cubic-bezier(0.23, 1, 0.32, 1) allow-discrete;
+}
+
+#about[open]::backdrop {
+    opacity: .8;
+}
+
+@starting-style {
+    #about[open] {
+        opacity: 0;
+        transform: translate(12px, -8px);
+    }
+
+    #about[open]::backdrop {
+        opacity: 0;
     }
 }
