@@ -47,6 +47,21 @@ ready(function() {
         }
         option_lines[option_following] = { color: (huntBells.indexOf( option_following ) !== -1)? '#D11' : '#11D', width: 4 };
 
+        // Work out how many changes make up a full course (rounds at a lead boundary).
+        var option_finishRow = option_notation.length;
+        if( option_leadOrCourse === 'course' ) {
+            var courseRow = PlaceNotation.rounds( option_stage ),
+                startRow = courseRow.slice( 0 ),
+                maxCourseRows = 10000;
+            while( option_finishRow < maxCourseRows ) {
+                courseRow = PlaceNotation.apply( option_notation[(option_finishRow - 1) % option_notation.length], courseRow );
+                ++option_finishRow;
+                if( PlaceNotation.rowsEqual( courseRow, startRow ) && option_finishRow % option_notation.length === 0 ) {
+                    break;
+                }
+            }
+        }
+
         // Create a new ringing practice interface
         var practice = new RingingPractice( {
             container: 'practice_container',
@@ -59,7 +74,7 @@ ready(function() {
             introduction: true,
             score: true,
             thatsAll: (option_leadOrCourse === 'course')? "That's all!" : ' ',
-            finishRow: (option_leadOrCourse === 'course')? false : option_notation.length,
+            finishRow: option_finishRow,
             placeStarts: { from: 0, every: option_notation.length },
             autostart: true,
             buttons: [{text: '↑ Exit', className: 'plain', callback: function() { document.querySelector( '#tutor .prev_button button' ).dispatchEvent( new Event( 'click', { bubbles: true } ) ); }}]
