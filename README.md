@@ -14,9 +14,15 @@ The results are published online at [bobwallis.github.io/MethodTutor/](https://b
 
 Going to the site will, by default, drop you onto the part where you search for methods. Type the name into the "Method Name" box and click on the search results to populate the stage and place notation.
 
+<img src="screenshots/search.png" alt="Search for a method" width="557" height="686">
+
 Clicking through to the next bit will let you choose which bell to steer, and some other basic options. And clicking "Go" will then launch the tutor.
 
+<img src="screenshots/options.png" alt="Choose options" width="557" height="686">
+
 Use the arrow keys on your keyboard, or tap the left/right/bottom side of the screen, to steer through the blue line.
+
+<img src="screenshots/tutor.png" alt="Tutor view" width="557" height="686">
 
 If you want to then you can link directly to a particular method by doing [something like this](https://bobwallis.github.io/MethodTutor/#title=Stedman%20Triples&notation=3.1.7.3.1.3%2C1&stage=7&ruleoffs={"from"%3A-3%2C"every"%3A6}). If you do so then I would recommend opening up in a window of size 500 by 650 or so. If you install as a web app then in some browsers you can collapse the titlebar to give the illusion you are running a native application.
 
