@@ -36,10 +36,18 @@ var Hash = {
                 fieldMap[field].dispatchEvent( new Event( 'change', { bubbles: true } ) );
             }
         }
-        // If the method has been fully populated via the hash then move onto options
+        // If the method has been fully populated via the hash then move onto options instantly
+        // Otherwise, move back to the method selection step
+        document.body.classList.add( 'no-transition' );
         if( typeof currentHash.title !== 'undefined' && typeof currentHash.notation !== 'undefined' && typeof currentHash.stage !== 'undefined' ) {
             document.querySelector( '#selectMethod .next_button button' ).dispatchEvent( new Event( 'click', { bubbles: true } ) );
         }
+        else {
+            document.querySelector( '#chooseOptions .prev_button button' ).dispatchEvent( new Event( 'click', { bubbles: true } ) );
+        }
+        setTimeout( function() {
+            document.body.classList.remove( 'no-transition' );
+        }, 500 );
     },
     update: function( e ) {
         var currentHash = parseCurrentHash(),

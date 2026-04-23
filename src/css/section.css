@@ -1,4 +1,9 @@
 /* Main full-screen section stack and transition states (`active`, `up`, `down`). */
+
+body.no-transition section {
+    transition: none;
+}
+
 section {
     display: block;
     z-index: 5;
