@@ -13,6 +13,7 @@
     color: var(--black);
     box-shadow: 0 8px 25px rgba(0,0,0,.4);
     hyphens: auto;
+    view-transition-name: about-dialog;
     opacity: 0;
     transform: translate(12px, -8px);
     transition: opacity .2s cubic-bezier(0.23, 1, 0.32, 1), transform .2s cubic-bezier(0.23, 1, 0.32, 1), overlay .2s cubic-bezier(0.23, 1, 0.32, 1) allow-discrete, display .2s cubic-bezier(0.23, 1, 0.32, 1) allow-discrete;
@@ -25,6 +26,53 @@
     & p {
         font-size: 14px;
         color: var(--black);
+    }
+}
+
+@supports (view-transition-name: about-dialog) {
+    :root:active-view-transition-type(about-in)::view-transition-group(about-dialog),
+    :root:active-view-transition-type(about-out)::view-transition-group(about-dialog) {
+        animation-duration: 150ms;
+    }
+
+    :root:active-view-transition-type(about-in)::view-transition-group(about-dialog) {
+        animation-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    :root:active-view-transition-type(about-out)::view-transition-group(about-dialog) {
+        animation-timing-function: cubic-bezier(0.68, 0, 0.77, 0);
+    }
+
+    :root:active-view-transition-type(about-in)::view-transition-new(about-dialog) {
+        animation-name: about-dialog-in;
+    }
+
+    :root:active-view-transition-type(about-out)::view-transition-old(about-dialog) {
+        animation-name: about-dialog-out;
+    }
+}
+
+@keyframes about-dialog-in {
+    from {
+        opacity: 0;
+        transform: translate(12px, -8px) scale(.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+}
+
+@keyframes about-dialog-out {
+    from {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translate(12px, -8px) scale(.97);
     }
 }
 
